@@ -8,14 +8,36 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var showAuthentication = false
+    private var authenticationManager = AuthenticationManager()
+    private var userManager = UserManager()
+    private var productManager = ProductManager()
+    private var discountProductManager = DiscountProductManager()
+    private var paymentManager = PaymentManager()
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        ZStack {
+            if !showAuthentication {
+                TabBarView(
+                    showAuthentication: $showAuthentication,
+                    authenticationManager: authenticationManager,
+                    userManager: userManager,
+                    productManager: productManager,
+                    discountProductManager: discountProductManager,
+                    paymentManager: paymentManager)
+            }
         }
-        .padding()
+        .onAppear {
+            let user = authenticationManager.user
+            self.showAuthentication = user == nil
+        }
+        .fullScreenCover(isPresented: $showAuthentication) {
+            SignInView(
+                showAuthentication: $showAuthentication,
+                authenticationManager: authenticationManager,
+                userManager: userManager,
+                paymentManager: paymentManager)
+        }
     }
 }
 
