@@ -24,7 +24,8 @@ struct AddToFavoriteButtonView: View {
                 .background(Color.white)
         }
         .cornerRadius(20)
-        .shadow(color: AppColor.secondary, radius: 2, x: 1, y: 1)
+        .shadow(color: RCValues.shared
+            .color(forKey: .secondary), radius: 2, x: 1, y: 1)
     }
 }
 

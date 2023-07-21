@@ -103,8 +103,10 @@ struct ProductDetailView: View {
                                     ForEach(product.sizes, id: \.self) { size in
                                         SelectSizeView(
                                             size: size,
-                                            background: viewModel.selectedSize == getSizeIndex(size: size) ? .black : AppColor.secondary,
-                                            foregroundColor: viewModel.selectedSize == getSizeIndex(size: size) ? .white : AppColor.primary) { 
+                                            background: viewModel.selectedSize == getSizeIndex(size: size) ? .black : RCValues.shared
+                                                .color(forKey: .secondary),
+                                            foregroundColor: viewModel.selectedSize == getSizeIndex(size: size) ? .white : RCValues.shared
+                                                .color(forKey: .primary)) {
                                                 viewModel.selectedSize = getSizeIndex(size: size)
                                         }
                                     }
@@ -126,7 +128,8 @@ struct ProductDetailView: View {
                         Spacer()
 
                     }
-                    .foregroundColor(AppColor.primary)
+                    .foregroundColor(RCValues.shared
+                        .color(forKey: .primary))
                     .padding()
                     .background(.white)
                     .cornerRadius(20)

@@ -20,7 +20,8 @@ struct OrderConfirmationView: View {
                 .underline()
         }
         .font(.custom(AppFont.regularFont, size: 18))
-        .foregroundColor(AppColor.primary)
+        .foregroundColor(RCValues.shared
+            .color(forKey: .primary))
         .padding(.horizontal)
         .padding(.top)
     }

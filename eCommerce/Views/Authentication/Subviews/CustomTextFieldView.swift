@@ -15,7 +15,8 @@ struct CustomTextFieldView: View {
         HStack {
             TextField(title, text: $text)
                 .font(.custom(AppFont.regularFont, size: 16))
-                .foregroundColor(AppColor.primary)
+                .foregroundColor(RCValues.shared
+                    .color(forKey: .primary))
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
             if !text.isEmpty {

@@ -28,8 +28,10 @@ struct PersonalInfoView: View {
             .padding(.bottom, 30)
             Divider()
         }
-        .background(AppColor.tabBarBackground)
-        .foregroundColor(AppColor.primary)
+        .background(RCValues.shared
+            .color(forKey: .tabBarBackground))
+        .foregroundColor(RCValues.shared
+            .color(forKey: .primary))
     }
 }
 

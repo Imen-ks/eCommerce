@@ -22,7 +22,8 @@ struct TabButton: View {
                 VStack(spacing: 0) {
                     Image(systemName: currentTab == tab ? tab.rawValue + ".fill" : tab.rawValue)
                         .resizable()
-                        .foregroundColor(AppColor.tabBarLabel)
+                        .foregroundColor(RCValues.shared
+                            .color(forKey: .tabBarLabel))
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 25, height: 25)
                         .frame(maxWidth: .infinity)
@@ -31,11 +32,13 @@ struct TabButton: View {
                             ZStack {
                                 if currentTab == tab {
                                     MaterialEffect(style: .regular)
-                                        .background(AppColor.secondary)
+                                        .background(RCValues.shared
+                                            .color(forKey: .secondary))
                                         .clipShape(Circle())
                                         .matchedGeometryEffect(id: "Tab", in: animation)
                                     Text(tab.tabName)
-                                        .foregroundColor(AppColor.tabBarLabel)
+                                        .foregroundColor(RCValues.shared
+                                            .color(forKey: .tabBarLabel))
                                         .font(.footnote)
                                         .padding(.top, 50)
                                         .padding(.bottom, 10)

@@ -28,7 +28,8 @@ struct ResetPasswordView: View {
                     .padding(.vertical, 20)
                     .padding(.horizontal, 20)
                     .background(.white)
-                    .foregroundColor(AppColor.primary)
+                    .foregroundColor(RCValues.shared
+                        .color(forKey: .primary))
                     .cornerRadius(10)
                 CustomTextFieldView(title: "Email", text: $viewModel.email)
                 Spacer()

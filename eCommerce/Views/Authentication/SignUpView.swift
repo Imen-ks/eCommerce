@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseAnalytics
 
 struct SignUpView: View {
     @Environment(\.dismiss) private var dismiss
@@ -44,6 +45,7 @@ struct SignUpView: View {
                            foregroundColor: .white) {
                     Task {
                         do {
+                            FirebaseAnalytics.Analytics.logEvent(AnalyticsEventSignUp, parameters: nil)
                             isLoading = true
                             try await viewModel.signUp()
                             showAuthentication = false
@@ -71,13 +73,15 @@ struct SignUpView: View {
                 HStack {
                     Text("Already have an account ?")
                         .font(.custom(AppFont.regularFont, size: 18))
-                        .foregroundColor(AppColor.primary)
+                        .foregroundColor(RCValues.shared
+                            .color(forKey: .primary))
                     Button {
                         dismiss()
                     } label: {
                         Text("Sign In")
                             .font(.custom(AppFont.boldFont, size: 20))
-                            .foregroundColor(isLoading ? .gray : AppColor.primary)
+                            .foregroundColor(isLoading ? .gray : RCValues.shared
+                                .color(forKey: .primary))
                             .underline()
                     }
                     .disabled(isLoading)

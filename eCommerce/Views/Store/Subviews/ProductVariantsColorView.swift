@@ -16,7 +16,8 @@ struct ProductVariantsColorView: View {
                 color
                     .mask(Circle())
                     .padding(.horizontal, 5)
-                    .shadow(color: AppColor.secondary, radius: 2, x: 1, y: 1)
+                    .shadow(color: RCValues.shared
+                        .color(forKey: .secondary), radius: 2, x: 1, y: 1)
                     .frame(width: 30)
             }
             Spacer()

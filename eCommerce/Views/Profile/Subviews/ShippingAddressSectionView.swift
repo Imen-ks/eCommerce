@@ -19,7 +19,8 @@ struct ShippingAddressSectionView: View {
             HStack {
                 Text("MY SHIPPING ADDRESS")
                     .font(.custom(AppFont.semiBoldFont, size: 15))
-                    .foregroundColor(AppColor.primary)
+                    .foregroundColor(RCValues.shared
+                        .color(forKey: .primary))
                     .padding(.leading, 25)                    
                 Spacer()
                 Button {
@@ -29,7 +30,8 @@ struct ShippingAddressSectionView: View {
                 }
                 .padding(.trailing, 20)
                 .font(.custom(AppFont.semiBoldFont, size: 20))
-                .foregroundColor(AppColor.accent)
+                .foregroundColor(RCValues.shared
+                    .color(forKey: .accent))
                 .sheet(isPresented: $isAddingAddress) {
                     NavigationStack {
                         AddOrEditShippingAddressView(
@@ -60,7 +62,8 @@ struct ShippingAddressSectionView: View {
                                     Text(shippingAddress.country.uppercased())
                                 }
                                 .font(.custom(AppFont.regularFont, size: 18))
-                                .foregroundColor(AppColor.primary)
+                                .foregroundColor(RCValues.shared
+                                    .color(forKey: .primary))
                                 .frame(width: UIScreen.main.bounds.width - 120, height: 160)
                         } else {
                             Circle()

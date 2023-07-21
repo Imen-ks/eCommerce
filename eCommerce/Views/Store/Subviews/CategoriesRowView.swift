@@ -13,7 +13,8 @@ struct CategoriesRowView: View {
     var body: some View {
         Text(title)
             .font(.custom(AppFont.regularFont, size: 20))
-            .foregroundColor(AppColor.primary)
+            .foregroundColor(RCValues.shared
+                .color(forKey: .primary))
             .padding(.vertical, 5)
     }
 }

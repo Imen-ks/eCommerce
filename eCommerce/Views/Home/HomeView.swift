@@ -18,7 +18,8 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             Rectangle()
-                .foregroundColor(AppColor.tabBarBackground)
+                .foregroundColor(RCValues.shared
+                    .color(forKey: .tabBarBackground))
                 .ignoresSafeArea()
                 .frame(height: 25)
             List {
@@ -50,7 +51,8 @@ struct HomeView: View {
                                 cartItemViewModel: cartItemViewModel)
                         }
                     }
-                    .foregroundColor(AppColor.primary)
+                    .foregroundColor(RCValues.shared
+                        .color(forKey: .primary))
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(alignment: .top, spacing: 15) {
                             ForEach(viewModel.featuredDiscountedProducts) { product in
@@ -97,7 +99,8 @@ struct HomeView: View {
                             )
                         }
                     }
-                    .foregroundColor(AppColor.primary)
+                    .foregroundColor(RCValues.shared
+                        .color(forKey: .primary))
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(alignment: .top, spacing: 15) {
                             ForEach(viewModel.featuredNewInProducts) { product in

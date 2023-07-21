@@ -40,7 +40,8 @@ struct FeaturedProductCellView: View {
                 ProductPriceView(product: product, discount: discount)
             }
             .font(.custom(AppFont.regularFont, size: 15))
-            .foregroundColor(AppColor.primary)
+            .foregroundColor(RCValues.shared
+                .color(forKey: .primary))
         }
         .frame(width: UIScreen.main.bounds.width / 3 - 15)
     }

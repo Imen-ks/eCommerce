@@ -29,10 +29,12 @@ struct CartView: View {
                             .frame(width: UIScreen.main.bounds.width / 2)
                         Text("Your cart is empty")
                             .font(.custom(AppFont.regularFont, size: 25))
-                            .foregroundColor(AppColor.accent)
+                            .foregroundColor(RCValues.shared
+                                .color(forKey: .accent))
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(AppColor.tabBarBackground.opacity(0.5))
+                    .background(RCValues.shared
+                        .color(forKey: .tabBarBackground).opacity(0.5))
                 } else {
                     ScrollView {
                         ForEach(viewModel.cartItems.sorted { $0.dateAdded > $1.dateAdded }) { item in

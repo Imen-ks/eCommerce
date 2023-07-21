@@ -121,7 +121,8 @@ struct TabBarView: View {
                 }
                 .padding(.vertical)
                 .padding(.bottom, getSafeArea().bottom == 0 ? -3 : (getSafeArea().bottom - 8))
-                .background(AppColor.tabBarBackground)
+                .background(RCValues.shared
+                    .color(forKey: .tabBarBackground))
             }
             ,alignment: .bottom
         )

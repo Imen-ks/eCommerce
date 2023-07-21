@@ -20,7 +20,8 @@ struct CartAmountView: View {
                 Text("$\(cartItems.reduce(0, { $0 + Double($1.quantity) * $1.price }), specifier: "%.2f")")
                     .font(.custom(AppFont.boldFont, size: 13))
             }
-            .foregroundColor(AppColor.primary)
+            .foregroundColor(RCValues.shared
+                .color(forKey: .primary))
             .padding(.top, 10)
             
             HStack {
@@ -30,17 +31,20 @@ struct CartAmountView: View {
                 Text("$\(cart?.freightCosts ?? 0, specifier: "%.2f")")
                     .font(.custom(AppFont.boldFont, size: 13))
             }
-            .foregroundColor(AppColor.primary)
+            .foregroundColor(RCValues.shared
+                .color(forKey: .primary))
             .padding(.top, 5)
             
             HStack {
                 Text("Discount")
                     .font(.custom(AppFont.regularFont, size: 13))
-                    .foregroundColor(AppColor.primary)
+                    .foregroundColor(RCValues.shared
+                        .color(forKey: .primary))
                 Spacer()
                 Text(cart?.discountAmount ?? 0 > 0 ? "- $\(cart?.discountAmount ?? 0, specifier: "%.2f")" : "$\(cart?.discountAmount ?? 0, specifier: "%.2f")")
                     .font(.custom(AppFont.boldFont, size: 13))
-                    .foregroundColor(cart?.discountAmount ?? 0 > 0 ? .red : AppColor.primary)
+                    .foregroundColor(cart?.discountAmount ?? 0 > 0 ? .red : RCValues.shared
+                        .color(forKey: .primary))
             }
             .padding(.top, 5)
             
@@ -53,7 +57,8 @@ struct CartAmountView: View {
                 Text("$\(cart?.totalAmount ?? 0, specifier: "%.2f")")
             }
             .font(.custom(AppFont.boldFont, size: 16))
-            .foregroundColor(AppColor.primary)
+            .foregroundColor(RCValues.shared
+                .color(forKey: .primary))
             .padding(.bottom, 5)
         }
     }

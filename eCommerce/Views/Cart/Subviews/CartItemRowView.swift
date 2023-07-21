@@ -28,7 +28,8 @@ struct CartItemRowView: View {
                     HStack(alignment: .top) {
                         Text(item.brand)
                             .font(.custom(AppFont.semiBoldFont, size: 15))
-                            .foregroundColor(AppColor.primary)
+                            .foregroundColor(RCValues.shared
+                                .color(forKey: .primary))
                         Spacer()
                         RemoveCartItemButtonView {
                             removeItemAction()
@@ -36,7 +37,8 @@ struct CartItemRowView: View {
                     }
                     Text(item.name)
                         .font(.custom(AppFont.regularFont, size: 12))
-                        .foregroundColor(AppColor.primary)
+                        .foregroundColor(RCValues.shared
+                            .color(forKey: .primary))
                         .frame(width: 220, alignment: .leading)
                         .lineLimit(1)
                     VStack(alignment: .leading) {
@@ -44,13 +46,15 @@ struct CartItemRowView: View {
                             Text("Color:")
                                 .foregroundColor(Color(UIColor.secondaryLabel))
                             Text(item.colorName)
-                                .foregroundColor(AppColor.primary)
+                                .foregroundColor(RCValues.shared
+                                    .color(forKey: .primary))
                         }
                         HStack {
                             Text("Size:")
                                 .foregroundColor(Color(UIColor.secondaryLabel))
                             Text(item.size)
-                                .foregroundColor(AppColor.primary)
+                                .foregroundColor(RCValues.shared
+                                    .color(forKey: .primary))
                         }
                     }
                     .font(.custom(AppFont.regularFont, size: 12))
@@ -60,7 +64,8 @@ struct CartItemRowView: View {
                             decreaseQuantityAction()
                         }
                         Text("\(item.quantity)")
-                            .foregroundColor(AppColor.primary)
+                            .foregroundColor(RCValues.shared
+                                .color(forKey: .primary))
                         IncreaseQuantityButtonView {
                             increaseQuantityAction()
                         }
@@ -72,7 +77,8 @@ struct CartItemRowView: View {
             .frame(height: 120)
             Text("$\(Double(item.quantity) * item.price, specifier: "%.2f")")
                 .font(.custom(AppFont.boldFont, size: 12))
-                .foregroundColor(AppColor.primary)
+                .foregroundColor(RCValues.shared
+                    .color(forKey: .primary))
         }
         .frame(height: 140)
     }

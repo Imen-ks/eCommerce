@@ -101,7 +101,10 @@ struct CheckoutView: View {
                 }
                 .disabled(paymentIsProcessed)
             } else if isLoading {
-                Text("Loading…")
+                VStack {
+                    Text("Loading…")
+                    ProgressView()
+                }
             }
 
             if viewModel.paymentIsCompleted {

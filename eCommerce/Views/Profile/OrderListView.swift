@@ -31,7 +31,8 @@ struct OrderListView: View {
                 didAppear = true
             }
         }
-        .background(AppColor.tabBarBackground.opacity(0.5))
+        .background(RCValues.shared
+            .color(forKey: .tabBarBackground).opacity(0.5))
         .navigationTitle("Orders")
         .navigationBarTitleDisplayMode(.inline)
     }

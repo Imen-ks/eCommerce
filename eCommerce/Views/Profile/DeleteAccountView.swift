@@ -17,7 +17,8 @@ struct DeleteAccountView: View {
             Text("Click below if you want to delete your account. This will permanently remove your account from our systems.\n\nThis action being sensitive, please consider signing out and and signing in again to be able to proceed.")
                 .font(.custom(AppFont.regularFont, size: 18))
                 .padding(.vertical, 20)
-                .foregroundColor(AppColor.primary)
+                .foregroundColor(RCValues.shared
+                    .color(forKey: .primary))
                 .cornerRadius(10)
             Button {
                 withAnimation {

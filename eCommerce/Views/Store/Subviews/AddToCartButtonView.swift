@@ -28,7 +28,8 @@ struct AddToCartButtonView: View {
                     .mask(Circle())
                 Text("Add to Cart")
                     .font(.custom(AppFont.regularFont, size: 10))
-                    .foregroundColor(AppColor.primary)
+                    .foregroundColor(RCValues.shared
+                        .color(forKey: .primary))
             }
         }
     }

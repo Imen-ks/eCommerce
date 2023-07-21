@@ -70,10 +70,12 @@ struct SignInView: View {
                     } label: {
                         Text("Forgot password ?")
                             .font(.custom(AppFont.regularFont, size: 18))
-                            .foregroundColor(AppColor.secondary)
+                            .foregroundColor(RCValues.shared
+                                .color(forKey: .secondary))
                     }
                     .buttonStyle(.bordered)
-                    .tint(AppColor.primary)
+                    .tint(RCValues.shared
+                        .color(forKey: .primary))
                     .sheet(isPresented: $showResetPassword) {
                         ResetPasswordView(showResetPassword: $showResetPassword,
                                           authenticationManager: authenticationManager)
@@ -87,7 +89,8 @@ struct SignInView: View {
                     HStack {
                         Text("Don't have an account ?")
                             .font(.custom(AppFont.regularFont, size: 18))
-                            .foregroundColor(AppColor.primary)
+                            .foregroundColor(RCValues.shared
+                                .color(forKey: .primary))
                         NavigationLink {
                             SignUpView(showAuthentication: $showAuthentication,
                                        authenticationManager: authenticationManager,
@@ -96,7 +99,8 @@ struct SignInView: View {
                         } label: {
                             Text("Sign Up")
                                 .font(.custom(AppFont.boldFont, size: 20))
-                                .foregroundColor(AppColor.primary)
+                                .foregroundColor(RCValues.shared
+                                    .color(forKey: .primary))
                                 .underline()
                         }
                     }

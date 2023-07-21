@@ -35,12 +35,14 @@ struct EditPersonalInfoView: View {
                     LabeledContent {
                         HStack {
                             TextField("", text: field.value)
-                                .foregroundColor(AppColor.primary)
+                                .foregroundColor(RCValues.shared
+                                    .color(forKey: .primary))
                                 .padding(.leading)
                         }
                     } label: {
                         Image(systemName: field.icon)
-                            .foregroundColor(AppColor.accent)
+                            .foregroundColor(RCValues.shared
+                                .color(forKey: .accent))
                             .frame(width: 20)
                     }
                 }
@@ -64,7 +66,8 @@ struct EditPersonalInfoView: View {
                     }
                 } label: {
                     Image(systemName: "envelope")
-                        .foregroundColor(AppColor.accent)
+                        .foregroundColor(RCValues.shared
+                            .color(forKey: .accent))
                         .frame(width: 20)
                 }
             }

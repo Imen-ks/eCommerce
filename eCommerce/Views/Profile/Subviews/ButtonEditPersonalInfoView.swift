@@ -15,7 +15,8 @@ struct ButtonEditPersonalInfoView: View {
         } label: {
             Image(systemName: "square.and.pencil")
                 .font(.custom(AppFont.semiBoldFont, size: 20))
-                .foregroundColor(AppColor.accent)
+                .foregroundColor(RCValues.shared
+                    .color(forKey: .accent))
                 .padding(.top)
                 .padding(.trailing, 20)
         }

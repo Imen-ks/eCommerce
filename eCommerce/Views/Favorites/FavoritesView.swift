@@ -27,10 +27,12 @@ struct FavoritesView: View {
                         .frame(width: UIScreen.main.bounds.width / 2)
                     Text("Your favorite list is empty")
                         .font(.custom(AppFont.regularFont, size: 25))
-                        .foregroundColor(AppColor.accent)
+                        .foregroundColor(RCValues.shared
+                            .color(forKey: .accent))
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(AppColor.tabBarBackground.opacity(0.5))
+                .background(RCValues.shared
+                    .color(forKey: .tabBarBackground).opacity(0.5))
                 .navigationTitle("Favorites")
                 .navigationBarTitleDisplayMode(.inline)
                 .onAppear {

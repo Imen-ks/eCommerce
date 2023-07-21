@@ -30,7 +30,9 @@ struct SelectSizeView: View {
 struct SelectSizeView_Previews: PreviewProvider {
     static var previews: some View {
         SelectSizeView(size: "M",
-                       background: AppColor.secondary,
-                       foregroundColor: AppColor.primary) {}
+                       background: RCValues.shared
+            .color(forKey: .secondary),
+                       foregroundColor: RCValues.shared
+            .color(forKey: .primary)) {}
     }
 }

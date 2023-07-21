@@ -56,7 +56,8 @@ struct ProductCellView: View {
                     }
                     .padding(.bottom, 10)
                 }
-                .foregroundColor(AppColor.primary)
+                .foregroundColor(RCValues.shared
+                    .color(forKey: .primary))
                 Spacer()
             }
             .padding(.vertical, 5)

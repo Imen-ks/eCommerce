@@ -20,11 +20,13 @@ struct AddOrEditShippingAddressView: View {
                 VStack(alignment: .leading) {
                     Text(field.label)
                         .font(.custom(AppFont.semiBoldFont, size: 18))
-                        .foregroundColor(AppColor.primary)
+                        .foregroundColor(RCValues.shared
+                            .color(forKey: .primary))
                         .padding(.leading, 15)
                     HStack {
                         TextField("Add information", text: field.value)
-                            .foregroundColor(AppColor.primary)
+                            .foregroundColor(RCValues.shared
+                                .color(forKey: .primary))
                             .padding(.leading)
                     }
                 }
@@ -42,7 +44,8 @@ struct AddOrEditShippingAddressView: View {
                 }
                 .padding(.top)
                 .buttonStyle(.borderedProminent)
-                .tint(AppColor.accent)
+                .tint(RCValues.shared
+                    .color(forKey: .accent))
 
             }
         }
@@ -56,7 +59,8 @@ struct AddOrEditShippingAddressView: View {
                     isAddingAddress.toggle()
                 } label: {
                     Text("Cancel")
-                        .foregroundColor(AppColor.accent)
+                        .foregroundColor(RCValues.shared
+                            .color(forKey: .accent))
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -64,7 +68,8 @@ struct AddOrEditShippingAddressView: View {
                     addAction()
                 } label: {
                     Text("Save")
-                        .foregroundColor(AppColor.accent)
+                        .foregroundColor(RCValues.shared
+                            .color(forKey: .accent))
                 }
             }
         }

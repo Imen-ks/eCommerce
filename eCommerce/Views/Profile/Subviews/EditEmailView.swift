@@ -24,13 +24,15 @@ struct EditEmailView: View {
                     } label: {
                         Text("Change email")
                             .font(.custom(AppFont.semiBoldFont, size: 18))
-                            .foregroundColor(AppColor.primary)
+                            .foregroundColor(RCValues.shared
+                                .color(forKey: .primary))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 5)
                     }
                     .buttonStyle(.bordered)
                     .padding(.leading, 40)
-                    .tint(AppColor.primary)
+                    .tint(RCValues.shared
+                        .color(forKey: .primary))
                 } else if isChangingEmail && !emailIsChanged {
                     VStack(alignment: .leading) {
                         Text("New Email")
@@ -41,7 +43,8 @@ struct EditEmailView: View {
                                 .padding(.leading)
                         } label: {
                             Image(systemName: "envelope")
-                                .foregroundColor(AppColor.accent)
+                                .foregroundColor(RCValues.shared
+                                    .color(forKey: .accent))
                                 .frame(width: 20)
                         }
                     }
@@ -50,18 +53,21 @@ struct EditEmailView: View {
                     } label: {
                         Text("Save")
                             .font(.custom(AppFont.semiBoldFont, size: 18))
-                            .foregroundColor(AppColor.primary)
+                            .foregroundColor(RCValues.shared
+                                .color(forKey: .primary))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 5)
                     }
                     .buttonStyle(.bordered)
                     .padding(.leading, 40)
-                    .tint(AppColor.accent)
+                    .tint(RCValues.shared
+                        .color(forKey: .accent))
                 } else if emailIsChanged {
                     Label {
                         Text("Email has been changed")
                             .font(.custom(AppFont.semiBoldFont, size: 18))
-                            .foregroundColor(AppColor.primary)
+                            .foregroundColor(RCValues.shared
+                                .color(forKey: .primary))
                             .frame(maxWidth: .infinity, alignment: .leading)
                     } icon: {
                         Image(systemName: "checkmark")
