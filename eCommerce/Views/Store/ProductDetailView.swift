@@ -168,6 +168,8 @@ struct ProductDetailView: View {
                 viewModel.addListenerForCartItems()
                 didAppear = true
             }
+            viewModel.selectedVariant = 0
+            viewModel.selectedSize = nil
             FirebaseAnalytics.Analytics.logEvent(AnalyticsEventViewItem, parameters: [
                 AnalyticsParameterItemBrand: product.brand,
                 AnalyticsParameterItemName: product.name,

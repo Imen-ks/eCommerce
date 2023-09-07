@@ -141,6 +141,11 @@ struct CheckoutView: View {
             viewModel.getProfile()
             viewModel.numberOfArticles = self.numberOfArticles
             viewModel.totalAmount = self.totalAmount
+            viewModel.paymentIsCompleted = false
+            viewModel.paymentIsFailed = false
+            viewModel.paymentIsCancelled = false
+            viewModel.paymentSheet = nil
+            viewModel.paymentResult = nil
         }
     }
 }

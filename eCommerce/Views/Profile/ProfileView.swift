@@ -65,6 +65,11 @@ struct ProfileView: View {
                             }
                             showError = true
                         }
+                        .onChange(of: viewModel.userAuth) { newValue in
+                            if newValue == nil {
+                                showAuthentication.toggle()
+                            }
+                        }
                     })
                 }
                 ShippingAddressSectionView(

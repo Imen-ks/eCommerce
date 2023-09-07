@@ -129,7 +129,7 @@ final class ProfileViewModel: ObservableObject {
         do {
             try authenticationManager.signOut()
         } catch {
-            print(error)
+            self.error = error.localizedDescription
         }
     }
 
