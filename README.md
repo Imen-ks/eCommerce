@@ -1,5 +1,7 @@
 # eCommerce Application
 
+![featured](https://github.com/Imen-ks/eCommerce/blob/main/eCommerce/Assets.xcassets/eCommerce.png)
+
 Xcode project built in SwiftUI relating to an eCommerce app showcasing fashion products and enabling users to :
 - create an account or login to an existing account
 - browse the product catalog
