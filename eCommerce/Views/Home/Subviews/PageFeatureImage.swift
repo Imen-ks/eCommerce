@@ -13,7 +13,7 @@ struct PageFeatureImage: View {
     var body: some View {
         Image(featureImage)
             .resizable()
-            .aspectRatio(3 / 2, contentMode: .fit)
+            .aspectRatio(contentMode: .fill)
     }
 }
 

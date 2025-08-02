@@ -23,8 +23,7 @@ struct HomeView: View {
                 .ignoresSafeArea()
                 .frame(height: 25)
             ScrollView {
-                PageView(pages: featureImages.map { PageFeatureImage(featureImage: $0) })
-                    .aspectRatio(3 / 2, contentMode: .fit)
+                PageView(images: featureImages)
                     .padding(.bottom, 8)
                 VStack(alignment: .leading) {
                     HStack {

@@ -48,15 +48,15 @@ struct StoreView: View {
                             selectedCategory = category.category
                             isSelectingAll = false
                         }
-                        .navigationDestination(isPresented: $isSelectingCategory) {
-                            CategoriesListView(
-                                productManager: productManager,
-                                discountProductManager: discountProductManager,
-                                category: selectedCategory,
-                                favoriteProductsViewModel: favoriteProductsViewModel,
-                                cartItemViewModel: cartItemViewModel)
-                        }
                     }
+                }
+                .navigationDestination(isPresented: $isSelectingCategory) {
+                    CategoriesListView(
+                        productManager: productManager,
+                        discountProductManager: discountProductManager,
+                        category: selectedCategory,
+                        favoriteProductsViewModel: favoriteProductsViewModel,
+                        cartItemViewModel: cartItemViewModel)
                 }
             }
             .navigationTitle("Store")

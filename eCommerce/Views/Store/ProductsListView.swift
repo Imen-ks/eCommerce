@@ -44,7 +44,7 @@ struct ProductsListView: View {
     }
     
     var body: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             ForEach(viewModel.products) { product in
                 NavigationLink {
                     ProductDetailView(
