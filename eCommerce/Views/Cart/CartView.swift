@@ -36,7 +36,7 @@ struct CartView: View {
                     .background(RCValues.shared
                         .color(forKey: .tabBarBackground).opacity(0.5))
                 } else {
-                    ScrollView {
+                    ScrollView(showsIndicators: false) {
                         ForEach(viewModel.cartItems.sorted { $0.dateAdded > $1.dateAdded }) { item in
                             CartItemRowView(item: item) {
                                 viewModel.removeFromCart(item: item)

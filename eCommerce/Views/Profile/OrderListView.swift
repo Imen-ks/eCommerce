@@ -12,7 +12,7 @@ struct OrderListView: View {
     @ObservedObject var viewModel: OrdersViewModel
 
     var body: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             ForEach(viewModel.orders.sorted { $0.dateCreated > $1.dateCreated }) { order in
                 NavigationLink {
                     OrderDetailsView(

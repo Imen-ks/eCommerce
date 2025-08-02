@@ -19,7 +19,7 @@ struct ProductDetailView: View {
     @ObservedObject var viewModel: CartItemViewModel
 
     var body: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             ZStack(alignment: .bottom) {
                 Color.white
                 VStack {
@@ -92,7 +92,7 @@ struct ProductDetailView: View {
                                 .padding(.vertical, 1)
                         }
 
-                        ScrollView(.horizontal) {
+                        ScrollView(.horizontal, showsIndicators: false) {
                             VStack(alignment: .leading) {
                                 Text("Select your size")
                                     .font(.custom(AppFont.semiBoldFont, size: 13))

@@ -22,7 +22,7 @@ struct HomeView: View {
                     .color(forKey: .tabBarBackground))
                 .ignoresSafeArea()
                 .frame(height: 25)
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 PageView(images: featureImages)
                     .padding(.bottom, 8)
                 VStack(alignment: .leading) {

@@ -12,7 +12,7 @@ struct OrderDetailsView: View {
     @ObservedObject var viewModel: OrdersViewModel
 
     var body: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             if let shippingAddress = viewModel.orderShippingAddress {
                 OrderDetailPersonnalInfoSectionView(
                     firstName: viewModel.firstName,

@@ -25,7 +25,7 @@ struct EditPersonalInfoView: View {
     let deleteAccountAction: () -> Void
 
     var body: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             Spacer()
             ForEach(fields, id: \.self.1.description) { field in
                 VStack(alignment: .leading) {

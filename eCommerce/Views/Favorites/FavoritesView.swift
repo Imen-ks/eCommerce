@@ -47,7 +47,7 @@ struct FavoritesView: View {
             }
             
             else {
-                ScrollView {
+                ScrollView(showsIndicators: false) {
                     ForEach(viewModel.favoriteProducts) { product in
                         ProductCellViewBuilder(
                             productId: product.id,

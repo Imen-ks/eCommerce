@@ -24,7 +24,7 @@ struct StoreView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 StoreRowView(title: "All", image: "all") {
                     isSelectingAll = true
                     selectedCategory = nil
