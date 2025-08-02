@@ -9,12 +9,11 @@ import Foundation
 import FirebaseAuth
 import Combine
 import StripePaymentSheet
+import FirebaseAnalytics
 
 @MainActor
 final class CheckoutViewModel: ObservableObject {
 
-    let backendCheckoutUrl = URL(string: "https://sphenoid-funny-echo.glitch.me/checkout")!
-    let merchantDisplayName = "Shopping App"
     @Published var userAuth: User?
     @Published var profile: Profile?
     @Published var cart: Cart?
@@ -29,11 +28,14 @@ final class CheckoutViewModel: ObservableObject {
     @Published var country = ""
     @Published var paymentSheet: PaymentSheet?
     @Published var paymentResult: PaymentSheetResult?
+    @Published var paymentIsProcessed = false
     @Published var paymentIsCompleted = false
     @Published var paymentIsFailed = false
     @Published var paymentIsCancelled = false
     @Published var error = ""
     @Published var orderId = ""
+
+    var viewController: UIViewController? = nil
 
     private let authenticationManager: AuthenticationManager
     private let userManager: UserRepository & CartRepository & OrderRepository
@@ -137,20 +139,55 @@ final class CheckoutViewModel: ObservableObject {
     func preparePaymentSheet() {
         Task {
             do {
-                if let profile, let cart, let paymentId = profile.paymentId {
-                    self.paymentSheet = try await paymentManager.preparePaymentSheet(
-                        parameters: StripePaymentIntentRequest(
-                            customerId: paymentId,
-                            totalAmount: cart.totalAmount))
-                }
+                self.paymentSheet = try await paymentManager.preparePaymentSheet(profile: profile, cart: cart)
             } catch {
                 print(error)
             }
         }
     }
 
+    /// Using Stripe's `PaymentSheet.present(from:)` method instead of the `PaymentSheet.Button to solve its internal behavior leading to the error : `Modifying state during view update, this will cause undefined behavior.`
+    func presentPaymentSheet() {
+        guard let paymentSheet = paymentSheet,
+              let viewController = viewController else { return }
+
+        paymentSheet.present(from: viewController) { result in
+            self.onPaymentCompletion(result: result)
+        }
+    }
+
     func onPaymentCompletion(result: PaymentSheetResult) {
         self.paymentResult = result
+        self.paymentIsProcessed = true
+        switch result {
+        case .completed:
+            self.paymentIsCompleted = true
+            self.clearCart()
+            self.addOrder()
+            FirebaseAnalytics.Analytics.logEvent(AnalyticsEventPurchase, parameters: [
+                AnalyticsParameterPaymentType: "card",
+                AnalyticsParameterPrice: self.totalAmount,
+                AnalyticsParameterSuccess: "1",
+                AnalyticsParameterCurrency: "USD"
+            ])
+        case .failed(let error):
+            self.paymentIsFailed = true
+            self.error = error.localizedDescription
+            FirebaseAnalytics.Analytics.logEvent(AnalyticsEventPurchase, parameters: [
+                AnalyticsParameterPaymentType: "card",
+                AnalyticsParameterPrice: self.totalAmount,
+                AnalyticsParameterSuccess: "0",
+                AnalyticsParameterCurrency: "USD"
+            ])
+        case .canceled:
+            self.paymentIsCancelled = true
+            FirebaseAnalytics.Analytics.logEvent(AnalyticsEventPurchase, parameters: [
+                AnalyticsParameterPaymentType: "card",
+                AnalyticsParameterPrice: self.totalAmount,
+                AnalyticsParameterSuccess: "0",
+                AnalyticsParameterCurrency: "USD"
+            ])
+        }
     }
 
     func clearCart() {

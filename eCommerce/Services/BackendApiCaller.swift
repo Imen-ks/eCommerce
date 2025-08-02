@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 
 struct BackendApi {
-    static let root = "https://sphenoid-funny-echo.glitch.me/"
+    static let root = "https://ecommerceserver-2mni.onrender.com/"
     var endpoint: Endpoint
     var method: HTTPMethod = .post
     var parameters: Encodable

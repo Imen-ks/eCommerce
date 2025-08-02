@@ -22,10 +22,9 @@ struct HomeView: View {
                     .color(forKey: .tabBarBackground))
                 .ignoresSafeArea()
                 .frame(height: 25)
-            List {
+            ScrollView {
                 PageView(pages: featureImages.map { PageFeatureImage(featureImage: $0) })
                     .aspectRatio(3 / 2, contentMode: .fit)
-                    .listRowInsets(EdgeInsets())
                     .padding(.bottom, 8)
                 VStack(alignment: .leading) {
                     HStack {
@@ -73,7 +72,7 @@ struct HomeView: View {
                     .frame(height: 280)
                     .padding(.horizontal)
                 }
-                .listRowSeparator(.hidden)
+                .padding(.horizontal)
                 VStack(alignment: .leading) {
                     HStack {
                         Text("NEW ARRIVALS")
@@ -121,10 +120,9 @@ struct HomeView: View {
                     .frame(height: 280)
                     .padding(.horizontal)
                 }
-                .listRowSeparator(.hidden)
+                .padding(.horizontal)
             }
             .offset(x: 0, y: -8)
-            .listStyle(.inset)
             .onAppear {
                 viewModel.getDiscounts()
                 viewModel.getFeaturedDiscountedProducts()

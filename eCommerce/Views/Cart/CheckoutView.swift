@@ -16,7 +16,6 @@ struct CheckoutView: View {
     @State private var didAppear = false
     @State private var isAddingAddress = false
     @State private var isLoading = false
-    @State private var paymentIsProcessed = false
     @ObservedObject var viewModel: CheckoutViewModel
 
     var body: some View {
@@ -46,11 +45,11 @@ struct CheckoutView: View {
                 viewModel.removeShippingAddress()
                 isAddingAddress.toggle()
             }
-            .disabled(paymentIsProcessed)
+            .disabled(viewModel.paymentIsProcessed)
             .offset(y: -8)
             .padding(.bottom)
             
-            if !isLoading && !paymentIsProcessed {
+            if !isLoading && !viewModel.paymentIsProcessed {
                 CheckoutContinueButtonView(
                     disabled: viewModel.shippingAddress == nil) {
                     viewModel.preparePaymentSheet()
@@ -58,48 +57,15 @@ struct CheckoutView: View {
                 }
             }
             
-            if let paymentSheet = viewModel.paymentSheet {
-                PaymentSheet.PaymentButton(
-                    paymentSheet: paymentSheet) { result in
-                        viewModel.paymentResult = result
-                        paymentIsProcessed.toggle()
-                        if let result = viewModel.paymentResult {
-                            switch result {
-                            case .completed:
-                                viewModel.paymentIsCompleted = true
-                                viewModel.clearCart()
-                                viewModel.addOrder()
-                                FirebaseAnalytics.Analytics.logEvent(AnalyticsEventPurchase, parameters: [
-                                  AnalyticsParameterPaymentType: "card",
-                                  AnalyticsParameterPrice: viewModel.totalAmount,
-                                  AnalyticsParameterSuccess: "1",
-                                  AnalyticsParameterCurrency: "USD"
-                                ])
-                            case .failed(let error):
-                                viewModel.paymentIsFailed = true
-                                viewModel.error = error.localizedDescription
-                                FirebaseAnalytics.Analytics.logEvent(AnalyticsEventPurchase, parameters: [
-                                  AnalyticsParameterPaymentType: "card",
-                                  AnalyticsParameterPrice: viewModel.totalAmount,
-                                  AnalyticsParameterSuccess: "0",
-                                  AnalyticsParameterCurrency: "USD"
-                                ])
-                            case .canceled:
-                                viewModel.paymentIsCancelled = true
-                                FirebaseAnalytics.Analytics.logEvent(AnalyticsEventPurchase, parameters: [
-                                  AnalyticsParameterPaymentType: "card",
-                                  AnalyticsParameterPrice: viewModel.totalAmount,
-                                  AnalyticsParameterSuccess: "0",
-                                  AnalyticsParameterCurrency: "USD"
-                                ])
-                            }
-                        }
-                } content: {
+            if viewModel.paymentSheet != nil {
+                Button {
+                    viewModel.presentPaymentSheet()
+                } label: {
                     CheckoutPaymentButtonContentView(
                         text: viewModel.paymentIsCompleted ? "Payment complete ✓" : "Proceed with Payment",
-                        background: viewModel.paymentIsCompleted ? .green : paymentIsProcessed ? .gray : .black)
+                        background: viewModel.paymentIsCompleted ? .green : viewModel.paymentIsProcessed ? .gray : .black)
                 }
-                .disabled(paymentIsProcessed)
+                .disabled(viewModel.paymentIsProcessed)
             } else if isLoading {
                 VStack {
                     Text("Loading…")
@@ -147,6 +113,10 @@ struct CheckoutView: View {
             viewModel.paymentSheet = nil
             viewModel.paymentResult = nil
         }
+        ViewControllerResolver { vc in
+            viewModel.viewController = vc
+        }
+        .frame(width: 0, height: 0)
     }
 }
 
@@ -161,6 +131,35 @@ struct CheckoutView_Previews: PreviewProvider {
                     authenticationManager: AuthenticationManager(),
                     userManager: UserManager(),
                     paymentManager: PaymentManager()))
+        }
+    }
+}
+
+// ViewController for presenting the Payment Sheet
+struct ViewControllerResolver: UIViewControllerRepresentable {
+    var onResolve: (UIViewController) -> Void
+
+    func makeUIViewController(context: Context) -> ResolverViewController {
+        ResolverViewController(onResolve: onResolve)
+    }
+
+    func updateUIViewController(_ uiViewController: ResolverViewController, context: Context) {}
+
+    class ResolverViewController: UIViewController {
+        let onResolve: (UIViewController) -> Void
+
+        init(onResolve: @escaping (UIViewController) -> Void) {
+            self.onResolve = onResolve
+            super.init(nibName: nil, bundle: nil)
+        }
+
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+
+        override func viewDidAppear(_ animated: Bool) {
+            super.viewDidAppear(animated)
+            onResolve(self)
         }
     }
 }

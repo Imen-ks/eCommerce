@@ -14,6 +14,7 @@ final class SignUpViewModel: ObservableObject {
     @Published var password = ""
     @Published var firstName = ""
     @Published var lastName = ""
+    var fullName: String { "\(firstName) \(lastName)".capitalized }
 
     private var paymentId: String?
     private let authenticationManager: AuthenticationManager
@@ -36,9 +37,7 @@ final class SignUpViewModel: ObservableObject {
         
         let user = try await authenticationManager.register(email: email, password: password)
         let stripeCustomerResponse = try await paymentManager.createCustomerPaymentId(
-            parameters: StripeCustomerRequest(customerId: user.uid,
-                                              fullName: "\(firstName) \(lastName)".capitalized,
-                                              email: email.lowercased()))
+            userId: user.uid, fullName: fullName, email: email.lowercased())
         
         if let paymentId = stripeCustomerResponse?.customer {
             let profile = Profile(user: user, firstName: firstName, lastName: lastName, paymentId: paymentId)

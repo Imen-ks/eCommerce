@@ -46,7 +46,7 @@ This project uses [Alamofire library](https://github.com/Alamofire/Alamofire) to
 ## Backend server
 
 As mentioned above, Stripe requires a server-side implementation.  
-The server in this project is hosted on [Glitch](https://glitch.com/edit/#!/sphenoid-funny-echo) and has **two endpoints**.
+The server in this project is hosted on [Render](https://render.com) and has **two endpoints**. The source code can be found [here](https://github.com/Imen-ks/eCommerceServer).
 
 1. The `/customers` endpoint creates the Customer object.
 

@@ -12,14 +12,24 @@ final class PaymentManager {
 
     let merchantDisplayName = "Shopping App"
 
-    func createCustomerPaymentId(parameters: Encodable) async throws -> StripeCustomerResponse?{
+    func createCustomerPaymentId(userId: String, fullName: String, email: String) async throws -> StripeCustomerResponse? {
+        let parameters = StripeCustomerRequest(
+            customerId: userId,
+            fullName: fullName,
+            email: email)
         let api = BackendApi(endpoint: .customers,
                              parameters: parameters)
         return try await BackendApiCaller.shared.load(
             api: api, response: StripeCustomerResponse.self)
     }
 
-    func preparePaymentSheet(parameters: Encodable) async throws -> PaymentSheet? {
+    func preparePaymentSheet(profile: Profile?, cart: Cart?) async throws -> PaymentSheet? {
+        guard let profile,
+              let cart,
+              let paymentId = profile.paymentId else { return nil }
+        let parameters = StripePaymentIntentRequest(
+          customerId: paymentId,
+          totalAmount: cart.totalAmount)
         let api = BackendApi(endpoint: .checkout, parameters: parameters)
         
         guard let paymentIntentResponse = try await BackendApiCaller.shared.load(
