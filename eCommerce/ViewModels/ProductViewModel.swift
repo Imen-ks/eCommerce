@@ -1,5 +1,5 @@
 //
-//  CartItemViewModel.swift
+//  ProductViewModel.swift
 //  eCommerce
 //
 //  Created by Imen Ksouri on 03/07/2023.
@@ -7,10 +7,13 @@
 
 import Foundation
 import Combine
+import FirebaseAnalytics
 
 @MainActor
-final class CartItemViewModel: ObservableObject {
+final class ProductViewModel: ObservableObject {
 
+    @Published var product: Product
+    @Published var discount: Discount?
     @Published var selectedVariant: Int = 0
     @Published var selectedSize: Int?
     @Published var quantity: Int = 1
@@ -20,9 +23,14 @@ final class CartItemViewModel: ObservableObject {
     private let userManager: CartRepository & FavoriteProductRepository
     private var cancellables: Set<AnyCancellable> = []
 
-    init(authenticationManager: AuthenticationManager, userManager: CartRepository & FavoriteProductRepository) {
-        self.authenticationManager = authenticationManager
-        self.userManager = userManager
+    init(authenticationManager: AuthenticationManager,
+        userManager: CartRepository & FavoriteProductRepository,
+        product: Product,
+        discount: Discount?) {
+            self.authenticationManager = authenticationManager
+            self.userManager = userManager
+            self.product = product
+            self.discount = discount
     }
 
     func addListenerForCartItems() {
@@ -52,6 +60,7 @@ final class CartItemViewModel: ObservableObject {
             do {
                 if let user = authenticationManager.user {
                     try await userManager.addFavoriteProduct(userId: user.uid, productId: productId)
+                    logEventAddToFavorites()
                 }
             } catch {
                 print(error)
@@ -95,11 +104,65 @@ final class CartItemViewModel: ObservableObject {
                             try await userManager.addToCart(userId: user.uid,
                                                                    item: item)
                         }
+                        logEventAddToCart()
                     }
                 }
             } catch {
                 print(error)
             }
         }
+    }
+
+    func getVariantIndex(url : String) -> Int {
+        let urls = product.variants.map { $0.imageUrl }
+        guard let index = urls.firstIndex(of: url) else {
+            return 0
+        }
+        return index
+    }
+
+    func getSizeIndex(size : String) -> Int {
+        let sizes = product.sizes
+        guard let index = sizes.firstIndex(of: size) else {
+            return 0
+        }
+        return index
+    }
+
+    func logEventViewItem() {
+        FirebaseAnalytics.Analytics.logEvent(AnalyticsEventViewItem, parameters: [
+            AnalyticsParameterItemBrand: product.brand,
+            AnalyticsParameterItemName: product.name,
+            AnalyticsParameterItemCategory: product.category,
+            AnalyticsParameterItemCategory2: product.subCategory,
+            AnalyticsParameterPrice: product.price,
+            AnalyticsParameterCurrency: "USD",
+            AnalyticsParameterDiscount: discount?.discountPercent ?? 0
+        ])
+    }
+
+    func logEventAddToFavorites() {
+        FirebaseAnalytics.Analytics.logEvent(AnalyticsEventAddToWishlist, parameters: [
+            AnalyticsParameterItemBrand: product.brand,
+            AnalyticsParameterItemName: product.name,
+            AnalyticsParameterItemCategory: product.category,
+            AnalyticsParameterItemCategory2: product.subCategory,
+            AnalyticsParameterPrice: product.price,
+            AnalyticsParameterCurrency: "USD",
+            AnalyticsParameterDiscount: discount?.discountPercent ?? 0
+        ])
+    }
+
+    func logEventAddToCart() {
+        FirebaseAnalytics.Analytics.logEvent(AnalyticsEventAddToCart, parameters: [
+            AnalyticsParameterItemBrand: product.brand,
+            AnalyticsParameterItemName: product.name,
+            AnalyticsParameterItemCategory: product.category,
+            AnalyticsParameterItemCategory2: product.subCategory,
+            AnalyticsParameterItemVariant: product.variants[selectedVariant].colorName,
+            AnalyticsParameterPrice: product.price,
+            AnalyticsParameterCurrency: "USD",
+            AnalyticsParameterDiscount: discount?.discountPercent ?? 0
+        ])
     }
 }

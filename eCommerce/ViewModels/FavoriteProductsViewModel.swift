@@ -35,7 +35,7 @@ final class FavoriteProductsViewModel: ObservableObject {
             .sink { completion in
                 
             } receiveValue: { [weak self] products in
-                self?.favoriteProducts = products
+                self?.favoriteProducts = products.sorted { $0.id > $1.id }
             }
             .store(in: &cancellables)
     }

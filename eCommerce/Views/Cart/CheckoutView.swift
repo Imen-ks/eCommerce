@@ -7,7 +7,6 @@
 
 import SwiftUI
 import StripePaymentSheet
-import FirebaseAnalytics
 
 struct CheckoutView: View {
     let numberOfArticles: Int
@@ -17,6 +16,24 @@ struct CheckoutView: View {
     @State private var isAddingAddress = false
     @State private var isLoading = false
     @ObservedObject var viewModel: CheckoutViewModel
+
+    init(authenticationManager: AuthenticationManager,
+        userManager: UserManager,
+        paymentManager: PaymentManager,
+        numberOfArticles: Int,
+        totalAmount: Double,
+        isCheckingOut: Binding<Bool>) {
+        self.numberOfArticles = numberOfArticles
+        self.totalAmount = totalAmount
+        self._isCheckingOut = isCheckingOut
+        self._viewModel = .init(
+            wrappedValue: CheckoutViewModel(
+                authenticationManager: authenticationManager,
+                userManager: userManager,
+                paymentManager: paymentManager
+            )
+        )
+    }
 
     var body: some View {
         ScrollView {
@@ -38,9 +55,7 @@ struct CheckoutView: View {
             ) {
                 viewModel.addShippingAddress()
                 isAddingAddress.toggle()
-                FirebaseAnalytics.Analytics.logEvent(AnalyticsEventAddShippingInfo, parameters: [
-                    AnalyticsParameterLocation: "\(viewModel.town), \(viewModel.country)"
-                ])
+                viewModel.logEventAddShippingInfo()
             } removeAction: {
                 viewModel.removeShippingAddress()
                 isAddingAddress.toggle()
@@ -124,13 +139,13 @@ struct CheckoutView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
             CheckoutView(
+                authenticationManager: AuthenticationManager(),
+                userManager: UserManager(),
+                paymentManager: PaymentManager(),
                 numberOfArticles: 2,
                 totalAmount: 169,
-                isCheckingOut: .constant(false),
-                viewModel: CheckoutViewModel(
-                    authenticationManager: AuthenticationManager(),
-                    userManager: UserManager(),
-                    paymentManager: PaymentManager()))
+                isCheckingOut: .constant(false)
+            )
         }
     }
 }

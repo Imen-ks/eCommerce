@@ -10,7 +10,7 @@ import SwiftUI
 struct ResetPasswordView: View {
     @Binding var showResetPassword: Bool
     var authenticationManager: AuthenticationManager
-    @StateObject private var viewModel: SignInViewModel
+    @ObservedObject private var viewModel: SignInViewModel
 
     init(showResetPassword: Binding<Bool>,
          authenticationManager: AuthenticationManager) {

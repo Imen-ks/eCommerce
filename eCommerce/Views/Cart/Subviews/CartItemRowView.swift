@@ -86,21 +86,25 @@ struct CartItemRowView: View {
 
 struct CartItemRowView_Previews: PreviewProvider {
     static var product = ProductDatabase.products[0]
+    static var item = CartItem(
+        id: product.id,
+        name: product.name,
+        brand: product.brand,
+        size: "M",
+        price: product.price,
+        discountPercent: 30,
+        quantity: 2,
+        colorName: product.variants.map{ $0.colorName }.first!,
+        imageUrl: product.variants.map{ $0.imageUrl }.first!,
+        dateAdded: Date()
+    )
     static var previews: some View {
         ScrollView {
-            CartItemRowView(item: CartItem(id: product.id,
-                                           name: product.name,
-                                           brand: product.brand,
-                                           size: "M",
-                                           price: product.price,
-                                           discountPercent: 30,
-                                           quantity: 2,
-                                           colorName: product.variants.map{ $0.colorName }.first!,
-                                           imageUrl: product.variants.map{ $0.imageUrl }.first!,
-                                           dateAdded: Date()),
-                            removeItemAction: {},
-                            decreaseQuantityAction: {},
-                            increaseQuantityAction: {})
+            CartItemRowView(
+                item: item,
+                removeItemAction: {},
+                decreaseQuantityAction: {},
+                increaseQuantityAction: {})
         }
         .padding(.horizontal, 15)
     }

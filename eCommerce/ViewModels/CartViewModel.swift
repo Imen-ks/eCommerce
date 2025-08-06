@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import FirebaseAnalytics
 
 @MainActor
 final class CartViewModel: ObservableObject {
@@ -47,7 +48,7 @@ final class CartViewModel: ObservableObject {
             .sink { completion in
                 
             } receiveValue: { [weak self] cartItems in
-                self?.cartItems = cartItems
+                self?.cartItems = cartItems.sorted { $0.dateAdded > $1.dateAdded }
             }
             .store(in: &cancellables)
     }
@@ -57,6 +58,7 @@ final class CartViewModel: ObservableObject {
             do {
                 if let user = authenticationManager.user {
                     try await userManager.removeFromCart(userId: user.uid, item: item)
+                    logEventRemoveFromCart(item: item)
                 }
             } catch {
                 print(error)
@@ -71,6 +73,7 @@ final class CartViewModel: ObservableObject {
             do {
                 if let user = authenticationManager.user {
                     try await userManager.increaseCartItemQuantity(userId: user.uid, item: item, newQuantity: newQuantity)
+                    logEventIncreaseQuantity(item: item)
                 }
             } catch {
                 print(error)
@@ -85,6 +88,7 @@ final class CartViewModel: ObservableObject {
             do {
                 if let user = authenticationManager.user {
                     try await userManager.decreaseCartItemQuantity(userId: user.uid, item: item, newQuantity: newQuantity)
+                    logEventDecreaseQuantity(item: item)
                 }
             } catch {
                 print(error)
@@ -113,5 +117,59 @@ final class CartViewModel: ObservableObject {
                 print(error)
             }
         return nil
+    }
+
+    func logEventViewCart() {
+        FirebaseAnalytics.Analytics.logEvent(AnalyticsEventViewCart, parameters: [
+            AnalyticsParameterQuantity: cartItems.map { $0.quantity }.reduce(0, +),
+            AnalyticsParameterPrice: cart?.totalAmount ?? 0,
+            AnalyticsParameterDiscount: cart?.discountAmount ?? 0,
+            AnalyticsParameterCurrency: "USD",
+        ])
+    }
+
+    func logEventRemoveFromCart(item: CartItem) {
+        FirebaseAnalytics.Analytics.logEvent(AnalyticsEventRemoveFromCart, parameters: [
+            AnalyticsParameterItemBrand: item.brand,
+            AnalyticsParameterItemName: item.name,
+            AnalyticsParameterItemVariant: item.colorName,
+            AnalyticsParameterQuantity: item.quantity,
+            AnalyticsParameterPrice: item.price,
+            AnalyticsParameterDiscount: item.discountPercent,
+            AnalyticsParameterCurrency: "USD",
+        ])
+    }
+
+    func logEventIncreaseQuantity(item: CartItem) {
+        FirebaseAnalytics.Analytics.logEvent(AnalyticsEventAddToCart, parameters: [
+            AnalyticsParameterItemBrand: item.brand,
+            AnalyticsParameterItemName: item.name,
+            AnalyticsParameterItemVariant: item.colorName,
+            AnalyticsParameterQuantity: 1,
+            AnalyticsParameterPrice: item.price,
+            AnalyticsParameterDiscount: item.discountPercent,
+            AnalyticsParameterCurrency: "USD",
+        ])
+    }
+
+    func logEventDecreaseQuantity(item: CartItem) {
+        FirebaseAnalytics.Analytics.logEvent(AnalyticsEventRemoveFromCart, parameters: [
+            AnalyticsParameterItemBrand: item.brand,
+            AnalyticsParameterItemName: item.name,
+            AnalyticsParameterItemVariant: item.colorName,
+            AnalyticsParameterQuantity: 1,
+            AnalyticsParameterPrice: item.price,
+            AnalyticsParameterDiscount: item.discountPercent,
+            AnalyticsParameterCurrency: "USD",
+        ])
+    }
+
+    func logEventBeginCheckout() {
+        FirebaseAnalytics.Analytics.logEvent(AnalyticsEventBeginCheckout, parameters: [
+            AnalyticsParameterQuantity: cartItems.map { $0.quantity }.reduce(0, +),
+            AnalyticsParameterPrice: cart?.totalAmount ?? 0,
+            AnalyticsParameterDiscount: cart?.discountAmount ?? 0,
+            AnalyticsParameterCurrency: "USD",
+        ])
     }
 }

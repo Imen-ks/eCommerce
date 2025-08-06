@@ -8,24 +8,25 @@
 import SwiftUI
 
 struct CategoriesListView: View {
+    var authenticationManager: AuthenticationManager
+    var userManager: UserManager
     var productManager: ProductManager
     var discountProductManager: DiscountProductManager
     var category: MasterCategory? = nil
-    @ObservedObject var favoriteProductsViewModel: FavoriteProductsViewModel
-    @ObservedObject var cartItemViewModel: CartItemViewModel
 
     var body: some View {
         List {
             NavigationLink {
                 ProductsListView(
+                    authenticationManager: authenticationManager,
+                    userManager: userManager,
                     productManager: productManager,
                     discountProductManager: discountProductManager,
                     category: category,
                     subCategory: nil,
                     showDiscountedProducts: false,
-                    showNewInProducts: false,
-                    favoriteProductsViewModel: favoriteProductsViewModel,
-                    cartItemViewModel: cartItemViewModel)
+                    showNewInProducts: false
+                )
             } label: {
                 CategoriesRowView(title: "All")
             }
@@ -36,14 +37,15 @@ struct CategoriesListView: View {
                         if subcategory.masterCategory == category {
                             NavigationLink {
                                 ProductsListView(
+                                    authenticationManager: authenticationManager,
+                                    userManager: userManager,
                                     productManager: productManager,
                                     discountProductManager: discountProductManager,
                                     category: category,
                                     subCategory: subcategory,
                                     showDiscountedProducts: false,
-                                    showNewInProducts: false,
-                                    favoriteProductsViewModel: favoriteProductsViewModel,
-                                    cartItemViewModel: cartItemViewModel)
+                                    showNewInProducts: false
+                                )
                             } label: {
                                 CategoriesRowView(title: subcategory.rawValue)
                             }
@@ -62,17 +64,12 @@ struct CategoriesListView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
             CategoriesListView(
+                authenticationManager: AuthenticationManager(),
+                userManager: UserManager(),
                 productManager: ProductManager(),
                 discountProductManager: DiscountProductManager(),
-                category: .accessories,
-                favoriteProductsViewModel: FavoriteProductsViewModel(
-                    authenticationManager: AuthenticationManager(),
-                    userManager: UserManager(),
-                    productManager: ProductManager(),
-                    discountProductManager: DiscountProductManager()),
-                cartItemViewModel: CartItemViewModel(
-                    authenticationManager: AuthenticationManager(),
-                    userManager: UserManager()))
+                category: .accessories
+            )
         }
     }
 }

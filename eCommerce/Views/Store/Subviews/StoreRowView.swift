@@ -42,7 +42,7 @@ struct StoreRowView_Previews: PreviewProvider {
     static var previews: some View {
         ScrollView {
             VStack(spacing: 10) {
-                StoreRowView(title: "All", image: "all") {}
+                StoreRowView(title: "All", image: "allCategories") {}
             }
             .padding(.horizontal, 15)
         }

@@ -16,14 +16,11 @@ final class HomeViewModel: ObservableObject {
     @Published var featuredNewInProducts: [Product] = []
     @Published var showDiscountedProducts = false
     @Published var showNewInProducts = false
-    private let authenticationManager: AuthenticationManager
     private let productManager: ProductRepository
     private let discountProductManager: DiscountProductRepository
 
-    init(authenticationManager: AuthenticationManager,
-         productManager: ProductRepository,
+    init(productManager: ProductRepository,
          discountProductManager: DiscountProductRepository) {
-        self.authenticationManager = authenticationManager
         self.productManager = productManager
         self.discountProductManager = discountProductManager
     }

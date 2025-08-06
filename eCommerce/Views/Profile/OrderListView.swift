@@ -11,6 +11,16 @@ struct OrderListView: View {
     @State private var didAppear = false
     @ObservedObject var viewModel: OrdersViewModel
 
+    init(authenticationManager: AuthenticationManager,
+        userManager: UserManager) {
+        self._viewModel = .init(
+            wrappedValue: OrdersViewModel(
+                authenticationManager: authenticationManager,
+                userManager: userManager
+            )
+        )
+    }
+
     var body: some View {
         ScrollView(showsIndicators: false) {
             ForEach(viewModel.orders.sorted { $0.dateCreated > $1.dateCreated }) { order in
@@ -42,9 +52,9 @@ struct OrderListView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
             OrderListView(
-                viewModel: OrdersViewModel(
-                    authenticationManager: AuthenticationManager(),
-                    userManager: UserManager()))
+                authenticationManager: AuthenticationManager(),
+                userManager: UserManager()
+            )
         }
     }
 }

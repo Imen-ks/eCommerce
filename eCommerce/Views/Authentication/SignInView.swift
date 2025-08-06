@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import FirebaseAnalytics
 
 struct SignInView: View {
     @State private var showPassword = false
@@ -18,7 +17,7 @@ struct SignInView: View {
     var authenticationManager: AuthenticationManager
     var userManager: UserRepository
     var paymentManager: PaymentManager
-    @StateObject private var viewModel: SignInViewModel
+    @ObservedObject private var viewModel: SignInViewModel
 
     init(showAuthentication: Binding<Bool>,
          authenticationManager: AuthenticationManager,
@@ -48,7 +47,7 @@ struct SignInView: View {
                                     return
                                 }
                                 showAuthentication = false
-                                FirebaseAnalytics.Analytics.logEvent(AnalyticsEventLogin, parameters: nil)
+                                viewModel.logEventLogin()
                             } catch let(error) {
                                 self.error = error.localizedDescription
                             }

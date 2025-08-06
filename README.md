@@ -59,7 +59,7 @@ The server in this project is hosted on [Render](https://render.com) and has **t
    - returns the Payment Intent’s client secret, the Ephemeral Key’s secret, the Customer’s id, and the publishable key to the app.
 
 > [!NOTE]
-> For performance purposes, Glitch’s projects sleep after 5 minutes. Therefore, one may experience delay when interacting with the app during the processes involving calls to the server (i.e. `Sign Up` & `Checkout`).
+> For performance purposes, Render’s projects sleep after 15 minutes. Therefore, one may experience delay when interacting with the app during the processes involving calls to the server (i.e. `Sign Up` & `Checkout`).
 
 ## Database
 

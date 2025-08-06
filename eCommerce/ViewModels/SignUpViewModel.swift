@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FirebaseAnalytics
 
 @MainActor
 final class SignUpViewModel: ObservableObject {
@@ -44,5 +45,9 @@ final class SignUpViewModel: ObservableObject {
             try await userManager.createNewUser(user: profile)
             try await userManager.initCart(userId: user.uid)
         }
+    }
+
+    func logEventSignUp() {
+        FirebaseAnalytics.Analytics.logEvent(AnalyticsEventSignUp, parameters: nil)
     }
 }

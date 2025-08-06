@@ -6,17 +6,35 @@
 //
 
 import SwiftUI
-import FirebaseAnalytics
 
 struct CartView: View {
+    var authenticationManager: AuthenticationManager
+    var userManager: UserManager
+    var paymentManager: PaymentManager
     @State private var didAppear = false
     @State private var isShowingDetail = false
     @State private var isCheckingOut = false
     @State private var selectedProduct: Product?
     @State private var selectedProductDiscount: Discount?
     @ObservedObject var viewModel: CartViewModel
-    @ObservedObject var cartItemViewModel: CartItemViewModel
-    @ObservedObject var checkoutViewModel: CheckoutViewModel
+
+    init(authenticationManager: AuthenticationManager,
+        userManager: UserManager,
+        productManager: ProductManager,
+        discountProductManager: DiscountProductManager,
+        paymentManager: PaymentManager) {
+        self.authenticationManager = authenticationManager
+        self.userManager = userManager
+        self.paymentManager = paymentManager
+        self._viewModel = .init(
+            wrappedValue: CartViewModel(
+                authenticationManager: authenticationManager,
+                userManager: userManager,
+                productManager: productManager,
+                discountProductManager: discountProductManager
+            )
+        )
+    }
 
     var body: some View {
         NavigationStack {
@@ -37,40 +55,13 @@ struct CartView: View {
                         .color(forKey: .tabBarBackground).opacity(0.5))
                 } else {
                     ScrollView(showsIndicators: false) {
-                        ForEach(viewModel.cartItems.sorted { $0.dateAdded > $1.dateAdded }) { item in
+                        ForEach(viewModel.cartItems) { item in
                             CartItemRowView(item: item) {
                                 viewModel.removeFromCart(item: item)
-                                FirebaseAnalytics.Analytics.logEvent(AnalyticsEventRemoveFromCart, parameters: [
-                                    AnalyticsParameterItemBrand: item.brand,
-                                    AnalyticsParameterItemName: item.name,
-                                    AnalyticsParameterItemVariant: item.colorName,
-                                    AnalyticsParameterQuantity: item.quantity,
-                                    AnalyticsParameterPrice: item.price,
-                                    AnalyticsParameterDiscount: item.discountPercent,
-                                    AnalyticsParameterCurrency: "USD",
-                                ])
                             } decreaseQuantityAction: {
                                 viewModel.decreaseQuantity(item: item)
-                                FirebaseAnalytics.Analytics.logEvent(AnalyticsEventRemoveFromCart, parameters: [
-                                    AnalyticsParameterItemBrand: item.brand,
-                                    AnalyticsParameterItemName: item.name,
-                                    AnalyticsParameterItemVariant: item.colorName,
-                                    AnalyticsParameterQuantity: 1,
-                                    AnalyticsParameterPrice: item.price,
-                                    AnalyticsParameterDiscount: item.discountPercent,
-                                    AnalyticsParameterCurrency: "USD",
-                                ])
                             } increaseQuantityAction: {
                                 viewModel.increaseQuantity(item: item)
-                                FirebaseAnalytics.Analytics.logEvent(AnalyticsEventAddToCart, parameters: [
-                                    AnalyticsParameterItemBrand: item.brand,
-                                    AnalyticsParameterItemName: item.name,
-                                    AnalyticsParameterItemVariant: item.colorName,
-                                    AnalyticsParameterQuantity: 1,
-                                    AnalyticsParameterPrice: item.price,
-                                    AnalyticsParameterDiscount: item.discountPercent,
-                                    AnalyticsParameterCurrency: "USD",
-                                ])
                             }
                             .onTapGesture {
                                 Task {
@@ -81,29 +72,24 @@ struct CartView: View {
                                     isShowingDetail.toggle()
                                 }
                             }
-                            .navigationDestination(isPresented: $isShowingDetail, destination: {
-                                if let selectedProduct {
-                                    ProductDetailView(
-                                        product: selectedProduct,
-                                        discount: selectedProductDiscount,
-                                        viewModel: cartItemViewModel)
-                                }
-                            })
                             Divider()
                         }
-                        
                     }
+                    .navigationDestination(isPresented: $isShowingDetail, destination: {
+                        if let selectedProduct {
+                            ProductDetailView(
+                                authenticationManager: authenticationManager,
+                                userManager: userManager,
+                                product: selectedProduct,
+                                discount: selectedProductDiscount)
+                        }
+                    })
                     VStack {
                         CartAmountView(cartItems: viewModel.cartItems,
                                        cart: viewModel.cart)
                         CheckoutButtonView {
                             isCheckingOut.toggle()
-                            FirebaseAnalytics.Analytics.logEvent(AnalyticsEventBeginCheckout, parameters: [
-                                AnalyticsParameterQuantity: viewModel.cartItems.map { $0.quantity }.reduce(0, +),
-                                AnalyticsParameterPrice: viewModel.cart?.totalAmount ?? 0,
-                                AnalyticsParameterDiscount: viewModel.cart?.discountAmount ?? 0,
-                                AnalyticsParameterCurrency: "USD",
-                            ])
+                            viewModel.logEventBeginCheckout()
                         }
                     }
                     .padding(.bottom)
@@ -118,22 +104,21 @@ struct CartView: View {
                     viewModel.addListenerForCart()
                     viewModel.addListenerForCartItems()
                     didAppear = true
-                    viewModel.getDiscounts()
                 }
-                FirebaseAnalytics.Analytics.logEvent(AnalyticsEventViewCart, parameters: [
-                    AnalyticsParameterQuantity: viewModel.cartItems.map { $0.quantity }.reduce(0, +),
-                    AnalyticsParameterPrice: viewModel.cart?.totalAmount ?? 0,
-                    AnalyticsParameterDiscount: viewModel.cart?.discountAmount ?? 0,
-                    AnalyticsParameterCurrency: "USD",
-                ])
+                viewModel.getDiscounts()
+                viewModel.logEventViewCart()
             }
             .fullScreenCover(isPresented: $isCheckingOut) {
                 NavigationStack {
                     CheckoutView(
-                        numberOfArticles: viewModel.cartItems.map { $0.quantity }.reduce(0, +),
+                        authenticationManager: authenticationManager,
+                        userManager: userManager,
+                        paymentManager: paymentManager,
+                        numberOfArticles: viewModel.cartItems.map { $0.quantity
+                        }.reduce(0, +),
                         totalAmount: viewModel.cart?.totalAmount ?? 0,
-                        isCheckingOut: $isCheckingOut,
-                        viewModel: checkoutViewModel)
+                        isCheckingOut: $isCheckingOut
+                    )
                 }
             }
         }
@@ -145,18 +130,12 @@ struct CartView_Previews: PreviewProvider {
         NavigationStack {
             VStack(spacing: 10) {
                 CartView(
-                    viewModel: CartViewModel(
-                        authenticationManager: AuthenticationManager(),
-                        userManager: UserManager(),
-                        productManager: ProductManager(),
-                        discountProductManager: DiscountProductManager()),
-                    cartItemViewModel: CartItemViewModel(
-                        authenticationManager: AuthenticationManager(),
-                        userManager: UserManager()),
-                    checkoutViewModel: CheckoutViewModel(
-                        authenticationManager: AuthenticationManager(),
-                        userManager: UserManager(),
-                        paymentManager: PaymentManager()))
+                    authenticationManager: AuthenticationManager(),
+                    userManager: UserManager(),
+                    productManager: ProductManager(),
+                    discountProductManager: DiscountProductManager(),
+                    paymentManager: PaymentManager()
+                )
             }
         }
     }

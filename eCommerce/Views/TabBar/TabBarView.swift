@@ -28,15 +28,11 @@ enum Tab: String, CaseIterable {
 struct TabBarView: View {
     @Binding var showAuthentication: Bool
     @State private var currentTab: Tab = .home
-    var productManager: ProductManager
-    var discountProductManager: DiscountProductManager
-    @StateObject var homeViewModel: HomeViewModel
-    @StateObject var favoriteProductsViewModel: FavoriteProductsViewModel
-    @StateObject var cartItemViewModel: CartItemViewModel
-    @StateObject var cartViewModel: CartViewModel
-    @StateObject var checkoutViewModel: CheckoutViewModel
-    @StateObject var profileViewModel: ProfileViewModel
-    @StateObject var ordersViewModel: OrdersViewModel
+    private var authenticationManager: AuthenticationManager
+    private var userManager: UserManager
+    private var productManager: ProductManager
+    private var discountProductManager: DiscountProductManager
+    private var paymentManager: PaymentManager
 
     @Namespace var animation
 
@@ -47,71 +43,49 @@ struct TabBarView: View {
          discountProductManager: DiscountProductManager,
          paymentManager: PaymentManager) {
         self._showAuthentication = showAuthentication
+        self.authenticationManager = authenticationManager
+        self.userManager = userManager
         self.productManager = productManager
         self.discountProductManager = discountProductManager
-        self._homeViewModel = .init(wrappedValue: HomeViewModel(
-            authenticationManager: authenticationManager,
-            productManager: productManager,
-            discountProductManager: discountProductManager))
-        self._favoriteProductsViewModel = .init(wrappedValue: FavoriteProductsViewModel(
-            authenticationManager: authenticationManager,
-            userManager: userManager,
-            productManager: productManager,
-            discountProductManager: discountProductManager))
-        self._cartItemViewModel = .init(wrappedValue: CartItemViewModel(
-            authenticationManager: authenticationManager,
-            userManager: userManager))
-        self._cartViewModel = .init(wrappedValue: CartViewModel(
-            authenticationManager: authenticationManager,
-            userManager: userManager,
-            productManager: productManager,
-            discountProductManager: discountProductManager))
-        self._checkoutViewModel = .init(wrappedValue: CheckoutViewModel(
-            authenticationManager: authenticationManager,
-            userManager: userManager,
-            paymentManager: paymentManager))
-        self._profileViewModel = .init(wrappedValue: ProfileViewModel(
-            authenticationManager: authenticationManager,
-            userManager: userManager))
-        self._ordersViewModel = .init(wrappedValue: OrdersViewModel(
-            authenticationManager: authenticationManager,
-            userManager: userManager))
+        self.paymentManager = paymentManager
     }
 
     var body: some View {
         TabView(selection: $currentTab) {
             HomeView(
+                authenticationManager: authenticationManager,
+                userManager: userManager,
                 productManager: productManager,
-                discountProductManager: discountProductManager,
-                viewModel: homeViewModel,
-                favoriteProductsViewModel: favoriteProductsViewModel,
-                cartItemViewModel: cartItemViewModel)
+                discountProductManager: discountProductManager)
             .tag(Tab.home)
 
             StoreView(
+                authenticationManager: authenticationManager,
+                userManager: userManager,
                 productManager: productManager,
-                discountProductManager: discountProductManager,
-                favoriteProductsViewModel: favoriteProductsViewModel,
-                cartItemViewModel: cartItemViewModel)
+                discountProductManager: discountProductManager)
             .tag(Tab.store)
 
             FavoritesView(
+                authenticationManager: authenticationManager,
+                userManager: userManager,
                 productManager: productManager,
-                discountProductManager: discountProductManager,
-                viewModel: favoriteProductsViewModel,
-                cartItemViewModel: cartItemViewModel)
+                discountProductManager: discountProductManager)
             .tag(Tab.favorites)
 
             CartView(
-                viewModel: cartViewModel,
-                cartItemViewModel: cartItemViewModel,
-                checkoutViewModel: checkoutViewModel)
+                authenticationManager: authenticationManager,
+                userManager: userManager,
+                productManager: productManager,
+                discountProductManager: discountProductManager,
+                paymentManager: paymentManager
+            )
             .tag(Tab.cart)
 
             ProfileView(
-                showAuthentication: $showAuthentication,
-                viewModel: profileViewModel,
-                ordersViewModel: ordersViewModel)
+                authenticationManager: authenticationManager,
+                userManager: userManager,
+                showAuthentication: $showAuthentication)
             .tag(Tab.profile)
         }
         .overlay (
@@ -138,6 +112,7 @@ struct TabBarView_Previews: PreviewProvider {
             userManager: UserManager(),
             productManager: ProductManager(),
             discountProductManager: DiscountProductManager(),
-            paymentManager: PaymentManager())
+            paymentManager: PaymentManager()
+        )
     }
 }

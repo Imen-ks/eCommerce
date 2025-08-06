@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import FirebaseAnalytics
 
 struct SignUpView: View {
     @Environment(\.dismiss) private var dismiss
@@ -18,7 +17,7 @@ struct SignUpView: View {
     var authenticationManager: AuthenticationManager
     var userManager: UserRepository
     var paymentManager: PaymentManager
-    @StateObject private var viewModel: SignUpViewModel
+    @ObservedObject private var viewModel: SignUpViewModel
 
     init(showAuthentication: Binding<Bool>,
          authenticationManager: AuthenticationManager,
@@ -45,7 +44,7 @@ struct SignUpView: View {
                            foregroundColor: .white) {
                     Task {
                         do {
-                            FirebaseAnalytics.Analytics.logEvent(AnalyticsEventSignUp, parameters: nil)
+                            viewModel.logEventSignUp()
                             isLoading = true
                             try await viewModel.signUp()
                             showAuthentication = false

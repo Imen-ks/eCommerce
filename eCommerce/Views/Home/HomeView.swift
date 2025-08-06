@@ -9,11 +9,24 @@ import SwiftUI
 
 struct HomeView: View {
     var featureImages = ["feature1", "feature2", "feature3"]
+    var authenticationManager: AuthenticationManager
+    var userManager: UserManager
     var productManager: ProductManager
     var discountProductManager: DiscountProductManager
     @ObservedObject var viewModel: HomeViewModel
-    @ObservedObject var favoriteProductsViewModel: FavoriteProductsViewModel
-    @ObservedObject var cartItemViewModel: CartItemViewModel
+
+    init(authenticationManager: AuthenticationManager,
+        userManager: UserManager,
+        productManager: ProductManager,
+        discountProductManager: DiscountProductManager) {
+        self.authenticationManager = authenticationManager
+        self.userManager = userManager
+        self.productManager = productManager
+        self.discountProductManager = discountProductManager
+        self._viewModel = .init(wrappedValue: HomeViewModel(
+            productManager: productManager,
+            discountProductManager: discountProductManager))
+    }
 
     var body: some View {
         NavigationStack {
@@ -37,17 +50,6 @@ struct HomeView: View {
                                 .font(.custom(AppFont.lightFont, size: 18))
                         }
                         .buttonStyle(.plain)
-                        .navigationDestination(isPresented: $viewModel.showDiscountedProducts) {
-                            ProductsListView(
-                                productManager: productManager,
-                                discountProductManager: discountProductManager,
-                                category: nil,
-                                subCategory: nil,
-                                showDiscountedProducts: viewModel.showDiscountedProducts,
-                                showNewInProducts: viewModel.showNewInProducts,
-                                favoriteProductsViewModel: favoriteProductsViewModel,
-                                cartItemViewModel: cartItemViewModel)
-                        }
                     }
                     .foregroundColor(RCValues.shared
                         .color(forKey: .primary))
@@ -56,9 +58,11 @@ struct HomeView: View {
                             ForEach(viewModel.featuredDiscountedProducts) { product in
                                 NavigationLink {
                                     ProductDetailView(
+                                        authenticationManager: authenticationManager,
+                                        userManager: userManager,
                                         product: product,
-                                        discount: viewModel.getDiscountForId(product.id),
-                                        viewModel: cartItemViewModel)
+                                        discount: viewModel.getDiscountForId(product.id)
+                                    )
                                 } label: {
                                     FeaturedProductCellView(
                                         product: product,
@@ -84,18 +88,6 @@ struct HomeView: View {
                                 .font(.custom(AppFont.lightFont, size: 18))
                         }
                         .buttonStyle(.plain)
-                        .navigationDestination(isPresented: $viewModel.showNewInProducts) {
-                            ProductsListView(
-                                productManager: productManager,
-                                discountProductManager: discountProductManager,
-                                category: nil,
-                                subCategory: nil,
-                                showDiscountedProducts: viewModel.showDiscountedProducts,
-                                showNewInProducts: viewModel.showNewInProducts,
-                                favoriteProductsViewModel: favoriteProductsViewModel,
-                                cartItemViewModel: cartItemViewModel
-                            )
-                        }
                     }
                     .foregroundColor(RCValues.shared
                         .color(forKey: .primary))
@@ -104,9 +96,11 @@ struct HomeView: View {
                             ForEach(viewModel.featuredNewInProducts) { product in
                                 NavigationLink {
                                     ProductDetailView(
+                                        authenticationManager: authenticationManager,
+                                        userManager: userManager,
                                         product: product,
-                                        discount: viewModel.getDiscountForId(product.id),
-                                        viewModel: cartItemViewModel)
+                                        discount: viewModel.getDiscountForId(product.id)
+                                    )
                                 } label: {
                                     FeaturedProductCellView(
                                         product: product,
@@ -122,6 +116,30 @@ struct HomeView: View {
                 .padding(.horizontal)
             }
             .offset(x: 0, y: -8)
+            .navigationDestination(isPresented: $viewModel.showDiscountedProducts) {
+                ProductsListView(
+                    authenticationManager: authenticationManager,
+                    userManager: userManager,
+                    productManager: productManager,
+                    discountProductManager: discountProductManager,
+                    category: nil,
+                    subCategory: nil,
+                    showDiscountedProducts: viewModel.showDiscountedProducts,
+                    showNewInProducts: viewModel.showNewInProducts
+                )
+            }
+            .navigationDestination(isPresented: $viewModel.showNewInProducts) {
+                ProductsListView(
+                    authenticationManager: authenticationManager,
+                    userManager: userManager,
+                    productManager: productManager,
+                    discountProductManager: discountProductManager,
+                    category: nil,
+                    subCategory: nil,
+                    showDiscountedProducts: viewModel.showDiscountedProducts,
+                    showNewInProducts: viewModel.showNewInProducts
+                )
+            }
             .onAppear {
                 viewModel.getDiscounts()
                 viewModel.getFeaturedDiscountedProducts()
@@ -140,20 +158,11 @@ struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
             HomeView(
+                authenticationManager: AuthenticationManager(),
+                userManager: UserManager(),
                 productManager: ProductManager(),
-                discountProductManager: DiscountProductManager(),
-                viewModel: HomeViewModel(
-                    authenticationManager: AuthenticationManager(),
-                    productManager: ProductManager(),
-                    discountProductManager: DiscountProductManager()),
-                favoriteProductsViewModel: FavoriteProductsViewModel(
-                    authenticationManager: AuthenticationManager(),
-                    userManager: UserManager(),
-                    productManager: ProductManager(),
-                    discountProductManager: DiscountProductManager()),
-                cartItemViewModel: CartItemViewModel(
-                    authenticationManager: AuthenticationManager(),
-                    userManager: UserManager()))
+                discountProductManager: DiscountProductManager()
+            )
         }
     }
 }

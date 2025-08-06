@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseAuth
 import Combine
+import FirebaseAnalytics
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
@@ -189,5 +190,11 @@ final class ProfileViewModel: ObservableObject {
                 print(error)
             }
         }
+    }
+
+    func logEventAddShippingInfo() {
+        FirebaseAnalytics.Analytics.logEvent(AnalyticsEventAddShippingInfo, parameters: [
+            AnalyticsParameterLocation: "\(town), \(country)"
+        ])
     }
 }

@@ -153,6 +153,7 @@ final class CheckoutViewModel: ObservableObject {
 
         paymentSheet.present(from: viewController) { result in
             self.onPaymentCompletion(result: result)
+            self.logEventPurchase(result: result)
         }
     }
 
@@ -164,29 +165,11 @@ final class CheckoutViewModel: ObservableObject {
             self.paymentIsCompleted = true
             self.clearCart()
             self.addOrder()
-            FirebaseAnalytics.Analytics.logEvent(AnalyticsEventPurchase, parameters: [
-                AnalyticsParameterPaymentType: "card",
-                AnalyticsParameterPrice: self.totalAmount,
-                AnalyticsParameterSuccess: "1",
-                AnalyticsParameterCurrency: "USD"
-            ])
         case .failed(let error):
             self.paymentIsFailed = true
             self.error = error.localizedDescription
-            FirebaseAnalytics.Analytics.logEvent(AnalyticsEventPurchase, parameters: [
-                AnalyticsParameterPaymentType: "card",
-                AnalyticsParameterPrice: self.totalAmount,
-                AnalyticsParameterSuccess: "0",
-                AnalyticsParameterCurrency: "USD"
-            ])
         case .canceled:
             self.paymentIsCancelled = true
-            FirebaseAnalytics.Analytics.logEvent(AnalyticsEventPurchase, parameters: [
-                AnalyticsParameterPaymentType: "card",
-                AnalyticsParameterPrice: self.totalAmount,
-                AnalyticsParameterSuccess: "0",
-                AnalyticsParameterCurrency: "USD"
-            ])
         }
     }
 
@@ -203,6 +186,31 @@ final class CheckoutViewModel: ObservableObject {
             if let userAuth, let cart, let shippingAddress {
                 self.orderId = try await userManager.addOrder(userId: userAuth.uid, cart: cart, cartItems: cartItems, shippingAddress: shippingAddress)
             }
+        }
+    }
+
+    func logEventAddShippingInfo() {
+        FirebaseAnalytics.Analytics.logEvent(AnalyticsEventAddShippingInfo, parameters: [
+            AnalyticsParameterLocation: "\(town), \(country)"
+        ])
+    }
+
+    func logEventPurchase(result: PaymentSheetResult) {
+        switch result {
+        case .completed:
+            FirebaseAnalytics.Analytics.logEvent(AnalyticsEventPurchase, parameters: [
+                AnalyticsParameterPaymentType: "card",
+                AnalyticsParameterPrice: self.totalAmount,
+                AnalyticsParameterSuccess: "1",
+                AnalyticsParameterCurrency: "USD"
+            ])
+        default:
+            FirebaseAnalytics.Analytics.logEvent(AnalyticsEventPurchase, parameters: [
+                AnalyticsParameterPaymentType: "card",
+                AnalyticsParameterPrice: self.totalAmount,
+                AnalyticsParameterSuccess: "0",
+                AnalyticsParameterCurrency: "USD"
+            ])
         }
     }
 }

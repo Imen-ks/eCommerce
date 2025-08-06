@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
-import FirebaseAnalytics
 
 struct ProfileView: View {
+    var authenticationManager: AuthenticationManager
+    var userManager: UserManager
     @Binding var showAuthentication: Bool
     @State private var didAppear = false
     @State private var isEditingPersonalInfo = false
@@ -18,7 +19,20 @@ struct ProfileView: View {
     @State private var isShowingAppSettings = false
     @State private var showError = false
     @ObservedObject var viewModel: ProfileViewModel
-    @ObservedObject var ordersViewModel: OrdersViewModel
+
+    init(authenticationManager: AuthenticationManager,
+        userManager: UserManager,
+        showAuthentication: Binding<Bool>) {
+        self.authenticationManager = authenticationManager
+        self.userManager = userManager
+        self._showAuthentication = showAuthentication
+        self._viewModel = .init(
+            wrappedValue: ProfileViewModel(
+                authenticationManager: authenticationManager,
+                userManager: userManager
+            )
+        )
+    }
 
     var body: some View {
         NavigationStack {
@@ -85,10 +99,8 @@ struct ProfileView: View {
                     shippingAddress: viewModel.shippingAddress
                 ) {
                     viewModel.addShippingAddress()
+                    viewModel.logEventAddShippingInfo()
                     isAddingAddress.toggle()
-                    FirebaseAnalytics.Analytics.logEvent(AnalyticsEventAddShippingInfo, parameters: [
-                        AnalyticsParameterLocation: "\(viewModel.town), \(viewModel.country)"
-                    ])
                 } removeAction: {
                     viewModel.removeShippingAddress()
                     isAddingAddress.toggle()
@@ -102,7 +114,9 @@ struct ProfileView: View {
                 .padding(.top, -8)
                 .navigationDestination(isPresented: $isShowingOrders) {
                     OrderListView(
-                        viewModel: ordersViewModel)
+                        authenticationManager: AuthenticationManager(),
+                        userManager: UserManager()
+                    )
                 }
                 Divider()
                 AppSettingsSectionView {
@@ -139,12 +153,9 @@ struct ProfileView: View {
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
         ProfileView(
-            showAuthentication: .constant(false),
-            viewModel: ProfileViewModel(
-                authenticationManager: AuthenticationManager(),
-                userManager: UserManager()),
-            ordersViewModel: OrdersViewModel(
-                authenticationManager: AuthenticationManager(),
-                userManager: UserManager()))
+            authenticationManager: AuthenticationManager(),
+            userManager: UserManager(),
+            showAuthentication: .constant(false)
+        )
     }
 }

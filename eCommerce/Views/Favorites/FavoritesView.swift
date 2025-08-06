@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct FavoritesView: View {
+    var authenticationManager: AuthenticationManager
+    var userManager: UserManager
     var productManager: ProductManager
     var discountProductManager: DiscountProductManager
     @State private var didAppear = false
@@ -15,7 +17,24 @@ struct FavoritesView: View {
     @State private var selectedProduct: Product?
     @State private var selectedProductDiscount: Discount?
     @ObservedObject var viewModel: FavoriteProductsViewModel
-    @ObservedObject var cartItemViewModel: CartItemViewModel
+
+    init(authenticationManager: AuthenticationManager,
+        userManager: UserManager,
+        productManager: ProductManager,
+        discountProductManager: DiscountProductManager) {
+        self.authenticationManager = authenticationManager
+        self.userManager = userManager
+        self.productManager = productManager
+        self.discountProductManager = discountProductManager
+        self._viewModel = .init(
+            wrappedValue: FavoriteProductsViewModel(
+                authenticationManager: authenticationManager,
+                userManager: userManager,
+                productManager: productManager,
+                discountProductManager: discountProductManager
+            )
+        )
+    }
 
     var body: some View {
         NavigationStack {
@@ -52,8 +71,8 @@ struct FavoritesView: View {
                         ProductCellViewBuilder(
                             productId: product.id,
                             discountId: product.id,
-                            imageName: viewModel.favoriteProducts.map { $0.id }.contains(product.id) ? "heart.fill" : "heart",
-                            color: viewModel.favoriteProducts.map { $0.id }.contains(product.id) ? .red : .gray,
+                            imageName: "heart.fill",
+                            color: .red,
                             productManager: productManager,
                             discountProductManager: discountProductManager) {
                                 viewModel.removeFavoriteProduct(productId: product.id)
@@ -65,20 +84,21 @@ struct FavoritesView: View {
                                     isShowingDetail.toggle()
                                 }
                             }
-                            .navigationDestination(isPresented: $isShowingDetail, destination: {
-                                if let selectedProduct {
-                                    ProductDetailView(
-                                        product: selectedProduct,
-                                        discount: selectedProductDiscount,
-                                        viewModel: cartItemViewModel)
-                                }
-                            })
                     }
                 }
                 .padding(.horizontal)
-                .listStyle(.inset)
                 .navigationTitle("Favorites")
                 .navigationBarTitleDisplayMode(.inline)
+                .navigationDestination(isPresented: $isShowingDetail, destination: {
+                    if let selectedProduct {
+                        ProductDetailView(
+                            authenticationManager: authenticationManager,
+                            userManager: userManager,
+                            product: selectedProduct,
+                            discount: selectedProductDiscount
+                        )
+                    }
+                })
                 .onAppear {
                     if !didAppear {
                         viewModel.addListenerForFavorites()
@@ -97,16 +117,11 @@ struct FavoritesView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
             FavoritesView(
+                authenticationManager: AuthenticationManager(),
+                userManager: UserManager(),
                 productManager: ProductManager(),
-                discountProductManager: DiscountProductManager(),
-                viewModel: FavoriteProductsViewModel(
-                    authenticationManager: AuthenticationManager(),
-                    userManager: UserManager(),
-                    productManager: ProductManager(),
-                    discountProductManager: DiscountProductManager()),
-                cartItemViewModel: CartItemViewModel(
-                    authenticationManager: AuthenticationManager(),
-                    userManager: UserManager()))
+                discountProductManager: DiscountProductManager()
+            )
         }
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FirebaseAnalytics
 
 @MainActor
 final class SignInViewModel: ObservableObject {
@@ -29,5 +30,9 @@ final class SignInViewModel: ObservableObject {
 
     func resetPassword() async throws {
         try await authenticationManager.resetPassword(email: email)
+    }
+
+    func logEventLogin() {
+        FirebaseAnalytics.Analytics.logEvent(AnalyticsEventLogin, parameters: nil)
     }
 }
