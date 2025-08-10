@@ -46,7 +46,6 @@ final class ProductManager: ProductRepository {
         } else if let category {
             return productsCollection
                 .whereField(Product.CodingKeys.category.rawValue, isEqualTo: category.rawValue)
-                .whereField(Product.CodingKeys.isNewIn.rawValue, isEqualTo: true)
         } else if discount {
             return productsCollection
                 .whereField(Product.CodingKeys.isDiscounted.rawValue, isEqualTo: true)
