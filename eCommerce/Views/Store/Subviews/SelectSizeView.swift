@@ -29,10 +29,10 @@ struct SelectSizeView: View {
 
 struct SelectSizeView_Previews: PreviewProvider {
     static var previews: some View {
-        SelectSizeView(size: "M",
-                       background: RCValues.shared
-            .color(forKey: .secondary),
-                       foregroundColor: RCValues.shared
-            .color(forKey: .primary)) {}
+        SelectSizeView(
+            size: "M",
+            background: RCValues.shared.color(forKey: .secondary),
+            foregroundColor: RCValues.shared.color(forKey: .primary)
+        ) {}
     }
 }

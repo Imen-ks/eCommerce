@@ -12,10 +12,9 @@ struct CheckoutView: View {
     let numberOfArticles: Int
     let totalAmount: Double
     @Binding var isCheckingOut: Bool
-    @State private var didAppear = false
     @State private var isAddingAddress = false
     @State private var isLoading = false
-    @ObservedObject var viewModel: CheckoutViewModel
+    @StateObject var viewModel: CheckoutViewModel
 
     init(authenticationManager: AuthenticationManager,
         userManager: UserManager,
@@ -30,7 +29,9 @@ struct CheckoutView: View {
             wrappedValue: CheckoutViewModel(
                 authenticationManager: authenticationManager,
                 userManager: userManager,
-                paymentManager: paymentManager
+                paymentManager: paymentManager,
+                numberOfArticles: numberOfArticles,
+                totalAmount: totalAmount
             )
         )
     }
@@ -55,7 +56,6 @@ struct CheckoutView: View {
             ) {
                 viewModel.addShippingAddress()
                 isAddingAddress.toggle()
-                viewModel.logEventAddShippingInfo()
             } removeAction: {
                 viewModel.removeShippingAddress()
                 isAddingAddress.toggle()
@@ -110,23 +110,6 @@ struct CheckoutView: View {
                     Image(systemName: "xmark")
                 }
             }
-        }
-        .onAppear {
-            if !didAppear {
-                viewModel.addListenerForCart()
-                viewModel.addListenerForCartItems()
-                viewModel.addListenerForShippingAddress()
-                didAppear = true
-            }
-            viewModel.getUser()
-            viewModel.getProfile()
-            viewModel.numberOfArticles = self.numberOfArticles
-            viewModel.totalAmount = self.totalAmount
-            viewModel.paymentIsCompleted = false
-            viewModel.paymentIsFailed = false
-            viewModel.paymentIsCancelled = false
-            viewModel.paymentSheet = nil
-            viewModel.paymentResult = nil
         }
         ViewControllerResolver { vc in
             viewModel.viewController = vc

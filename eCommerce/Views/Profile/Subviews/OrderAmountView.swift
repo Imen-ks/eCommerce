@@ -20,8 +20,9 @@ struct OrderAmountView: View {
                 Text("$\(orderItems.reduce(0, { $0 + Double($1.quantity) * $1.price }), specifier: "%.2f")")
                     .font(.custom(AppFont.boldFont, size: 13))
             }
-            .foregroundColor(RCValues.shared
-                .color(forKey: .primary))
+            .foregroundColor(
+                RCValues.shared.color(forKey: .primary)
+            )
             .padding(.top, 10)
             
             HStack {
@@ -31,20 +32,25 @@ struct OrderAmountView: View {
                 Text("$\(order.freightCosts, specifier: "%.2f")")
                     .font(.custom(AppFont.boldFont, size: 13))
             }
-            .foregroundColor(RCValues.shared
-                .color(forKey: .primary))
+            .foregroundColor(
+                RCValues.shared.color(forKey: .primary)
+            )
             .padding(.top, 5)
             
             HStack {
                 Text("Discount")
                     .font(.custom(AppFont.regularFont, size: 13))
-                    .foregroundColor(RCValues.shared
-                        .color(forKey: .primary))
+                    .foregroundColor(
+                        RCValues.shared.color(forKey: .primary)
+                    )
                 Spacer()
                 Text(order.discountAmount > 0 ? "- $\(order.discountAmount, specifier: "%.2f")" : "$\(order.discountAmount, specifier: "%.2f")")
                     .font(.custom(AppFont.boldFont, size: 13))
-                    .foregroundColor(order.discountAmount > 0 ? .red : RCValues.shared
-                        .color(forKey: .primary))
+                    .foregroundColor(
+                        order.discountAmount > 0
+                        ? .red
+                        : RCValues.shared.color(forKey: .primary)
+                    )
             }
             .padding(.top, 5)
             
@@ -57,8 +63,9 @@ struct OrderAmountView: View {
                 Text("$\(order.totalAmount, specifier: "%.2f")")
             }
             .font(.custom(AppFont.boldFont, size: 16))
-            .foregroundColor(RCValues.shared
-                .color(forKey: .primary))
+            .foregroundColor(
+                RCValues.shared.color(forKey: .primary)
+            )
             .padding(.bottom, 5)
         }
     }

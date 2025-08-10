@@ -28,8 +28,9 @@ struct SignOutButtonView: View {
                     .padding(.leading, 10)
                 } label: {
                     Image(systemName: "rectangle.portrait.and.arrow.right")
-                        .foregroundColor(RCValues.shared
-                            .color(forKey: .accent))
+                        .foregroundColor(
+                            RCValues.shared.color(forKey: .accent)
+                        )
                         .frame(width: 20)
                 }
                 .padding(.horizontal)

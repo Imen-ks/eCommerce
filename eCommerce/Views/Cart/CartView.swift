@@ -11,18 +11,19 @@ struct CartView: View {
     var authenticationManager: AuthenticationManager
     var userManager: UserManager
     var paymentManager: PaymentManager
-    @State private var didAppear = false
     @State private var isShowingDetail = false
     @State private var isCheckingOut = false
     @State private var selectedProduct: Product?
     @State private var selectedProductDiscount: Discount?
-    @ObservedObject var viewModel: CartViewModel
+    @StateObject var viewModel: CartViewModel
 
-    init(authenticationManager: AuthenticationManager,
+    init(
+        authenticationManager: AuthenticationManager,
         userManager: UserManager,
         productManager: ProductManager,
         discountProductManager: DiscountProductManager,
-        paymentManager: PaymentManager) {
+        paymentManager: PaymentManager
+    ) {
         self.authenticationManager = authenticationManager
         self.userManager = userManager
         self.paymentManager = paymentManager
@@ -47,12 +48,14 @@ struct CartView: View {
                             .frame(width: UIScreen.main.bounds.width / 2)
                         Text("Your cart is empty")
                             .font(.custom(AppFont.regularFont, size: 25))
-                            .foregroundColor(RCValues.shared
-                                .color(forKey: .accent))
+                            .foregroundColor(
+                                RCValues.shared.color(forKey: .accent)
+                            )
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(RCValues.shared
-                        .color(forKey: .tabBarBackground).opacity(0.5))
+                    .background(
+                        RCValues.shared.color(forKey: .tabBarBackground).opacity(0.5)
+                    )
                 } else {
                     ScrollView(showsIndicators: false) {
                         ForEach(viewModel.cartItems) { item in
@@ -81,12 +84,15 @@ struct CartView: View {
                                 authenticationManager: authenticationManager,
                                 userManager: userManager,
                                 product: selectedProduct,
-                                discount: selectedProductDiscount)
+                                discount: selectedProductDiscount
+                            )
                         }
                     })
                     VStack {
-                        CartAmountView(cartItems: viewModel.cartItems,
-                                       cart: viewModel.cart)
+                        CartAmountView(
+                            cartItems: viewModel.cartItems,
+                            cart: viewModel.cart
+                        )
                         CheckoutButtonView {
                             isCheckingOut.toggle()
                             viewModel.logEventBeginCheckout()
@@ -99,15 +105,6 @@ struct CartView: View {
             .padding(.top, viewModel.cartItems.isEmpty ? 0 : 20)
             .navigationTitle("Cart")
             .navigationBarTitleDisplayMode(.inline)
-            .onAppear {
-                if !didAppear {
-                    viewModel.addListenerForCart()
-                    viewModel.addListenerForCartItems()
-                    didAppear = true
-                }
-                viewModel.getDiscounts()
-                viewModel.logEventViewCart()
-            }
             .fullScreenCover(isPresented: $isCheckingOut) {
                 NavigationStack {
                     CheckoutView(

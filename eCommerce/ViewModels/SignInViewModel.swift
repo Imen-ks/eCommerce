@@ -10,10 +10,8 @@ import FirebaseAnalytics
 
 @MainActor
 final class SignInViewModel: ObservableObject {
-
     @Published var email = ""
     @Published var password = ""
-
     private let authenticationManager: AuthenticationManager
 
     init(authenticationManager: AuthenticationManager) {
@@ -24,7 +22,6 @@ final class SignInViewModel: ObservableObject {
         guard !email.isEmpty, !password.isEmpty else {
             return
         }
-        
         try await authenticationManager.signIn(email: email, password: password)
     }
 

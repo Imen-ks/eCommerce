@@ -9,22 +9,23 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var showAuthentication = false
-    private var authenticationManager = AuthenticationManager()
-    private var userManager = UserManager()
-    private var productManager = ProductManager()
-    private var discountProductManager = DiscountProductManager()
-    private var paymentManager = PaymentManager()
+    private let authenticationManager = AuthenticationManager()
+    private let userManager = UserManager()
+    private let productManager = ProductManager()
+    private let discountProductManager = DiscountProductManager()
+    private let paymentManager = PaymentManager()
 
     var body: some View {
         ZStack {
             if !showAuthentication {
                 TabBarView(
-                    showAuthentication: $showAuthentication,
                     authenticationManager: authenticationManager,
                     userManager: userManager,
                     productManager: productManager,
                     discountProductManager: discountProductManager,
-                    paymentManager: paymentManager)
+                    paymentManager: paymentManager,
+                    showAuthentication: $showAuthentication
+                )
             }
         }
         .onAppear {
@@ -33,10 +34,11 @@ struct ContentView: View {
         }
         .fullScreenCover(isPresented: $showAuthentication) {
             SignInView(
-                showAuthentication: $showAuthentication,
                 authenticationManager: authenticationManager,
                 userManager: userManager,
-                paymentManager: paymentManager)
+                paymentManager: paymentManager,
+                showAuthentication: $showAuthentication
+            )
         }
     }
 }

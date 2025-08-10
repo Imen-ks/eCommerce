@@ -12,8 +12,6 @@ import FirebaseAnalytics
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
-
-    @Published var userAuth: User?
     @Published var profile: Profile?
     @Published var shippingAddress: ShippingAddress?
     @Published var firstName = ""
@@ -30,17 +28,20 @@ final class ProfileViewModel: ObservableObject {
     @Published var town = ""
     @Published var country = ""
     var emailUpdateSteps = 0
+    private var userAuth: User?
     private let authenticationManager: AuthenticationManager
     private let userManager: UserRepository
     private var cancellables: Set<AnyCancellable> = []
 
-    init(authenticationManager: AuthenticationManager, userManager: UserRepository) {
+    init(
+        authenticationManager: AuthenticationManager,
+        userManager: UserRepository
+    ) {
         self.authenticationManager = authenticationManager
         self.userManager = userManager
-    }
-
-    func getUser() {
         self.userAuth = authenticationManager.user
+        getProfile()
+        addListenerForShippingAddress()
     }
 
     func getUserAuthEmail() -> String {
@@ -84,7 +85,7 @@ final class ProfileViewModel: ObservableObject {
     func updateEmail() {
         if let userAuth {
             Task {
-                if authenticationManager.user?.email != email || authenticationManager.user?.email != profile?.email  {
+                if userAuth.email != email || userAuth.email != profile?.email  {
                     do {
                         try await authenticationManager.updateEmail(email: email)
                         emailUpdateSteps += 1
@@ -98,7 +99,7 @@ final class ProfileViewModel: ObservableObject {
                 }
             }
             Task {
-                if profile?.email != email || authenticationManager.user?.email != profile?.email {
+                if profile?.email != email || userAuth.email != profile?.email {
                     do {
                         try await userManager.updateUserEmail(
                             userId: userAuth.uid, email: email)
@@ -145,8 +146,8 @@ final class ProfileViewModel: ObservableObject {
     }
 
     func addListenerForShippingAddress() {
-        guard let user = authenticationManager.user else { return }
-        userManager.addListenerForShippingAddress(userId: user.uid)
+        guard let userAuth else { return }
+        userManager.addListenerForShippingAddress(userId: userAuth.uid)
             .sink { completion in
                 
             } receiveValue: { [weak self] address in

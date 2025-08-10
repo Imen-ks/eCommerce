@@ -26,28 +26,30 @@ enum Tab: String, CaseIterable {
 }
 
 struct TabBarView: View {
+    private let authenticationManager: AuthenticationManager
+    private let userManager: UserManager
+    private let productManager: ProductManager
+    private let discountProductManager: DiscountProductManager
+    private let paymentManager: PaymentManager
     @Binding var showAuthentication: Bool
     @State private var currentTab: Tab = .home
-    private var authenticationManager: AuthenticationManager
-    private var userManager: UserManager
-    private var productManager: ProductManager
-    private var discountProductManager: DiscountProductManager
-    private var paymentManager: PaymentManager
 
     @Namespace var animation
 
-    init(showAuthentication: Binding<Bool>,
-         authenticationManager: AuthenticationManager,
-         userManager: UserManager,
-         productManager: ProductManager,
-         discountProductManager: DiscountProductManager,
-         paymentManager: PaymentManager) {
-        self._showAuthentication = showAuthentication
+    init(
+        authenticationManager: AuthenticationManager,
+        userManager: UserManager,
+        productManager: ProductManager,
+        discountProductManager: DiscountProductManager,
+        paymentManager: PaymentManager,
+        showAuthentication: Binding<Bool>
+    ) {
         self.authenticationManager = authenticationManager
         self.userManager = userManager
         self.productManager = productManager
         self.discountProductManager = discountProductManager
         self.paymentManager = paymentManager
+        self._showAuthentication = showAuthentication
     }
 
     var body: some View {
@@ -56,22 +58,22 @@ struct TabBarView: View {
                 authenticationManager: authenticationManager,
                 userManager: userManager,
                 productManager: productManager,
-                discountProductManager: discountProductManager)
-            .tag(Tab.home)
+                discountProductManager: discountProductManager
+            ).tag(Tab.home)
 
             StoreView(
                 authenticationManager: authenticationManager,
                 userManager: userManager,
                 productManager: productManager,
-                discountProductManager: discountProductManager)
-            .tag(Tab.store)
+                discountProductManager: discountProductManager
+            ).tag(Tab.store)
 
             FavoritesView(
                 authenticationManager: authenticationManager,
                 userManager: userManager,
                 productManager: productManager,
-                discountProductManager: discountProductManager)
-            .tag(Tab.favorites)
+                discountProductManager: discountProductManager
+            ).tag(Tab.favorites)
 
             CartView(
                 authenticationManager: authenticationManager,
@@ -79,24 +81,33 @@ struct TabBarView: View {
                 productManager: productManager,
                 discountProductManager: discountProductManager,
                 paymentManager: paymentManager
-            )
-            .tag(Tab.cart)
+            ).tag(Tab.cart)
 
             ProfileView(
                 authenticationManager: authenticationManager,
                 userManager: userManager,
-                showAuthentication: $showAuthentication)
-            .tag(Tab.profile)
+                showAuthentication: $showAuthentication
+            ).tag(Tab.profile)
         }
         .overlay (
             HStack(spacing: 0) {
                 ForEach(Tab.allCases, id: \.self) { tab in
-                    TabButton(currentTab: $currentTab, animation: animation, tab: tab)
+                    TabButton(
+                        currentTab: $currentTab,
+                        animation: animation,
+                        tab: tab
+                    )
                 }
                 .padding(.vertical)
-                .padding(.bottom, getSafeArea().bottom == 0 ? -3 : (getSafeArea().bottom - 8))
-                .background(RCValues.shared
-                    .color(forKey: .tabBarBackground))
+                .padding(
+                    .bottom,
+                    getSafeArea().bottom == 0
+                    ? -3
+                    : (getSafeArea().bottom - 8)
+                )
+                .background(
+                    RCValues.shared.color(forKey: .tabBarBackground)
+                )
             }
             ,alignment: .bottom
         )
@@ -107,12 +118,12 @@ struct TabBarView: View {
 struct TabBarView_Previews: PreviewProvider {
     static var previews: some View {
         TabBarView(
-            showAuthentication: .constant(false),
             authenticationManager: AuthenticationManager(),
             userManager: UserManager(),
             productManager: ProductManager(),
             discountProductManager: DiscountProductManager(),
-            paymentManager: PaymentManager()
+            paymentManager: PaymentManager(),
+            showAuthentication: .constant(false)
         )
     }
 }

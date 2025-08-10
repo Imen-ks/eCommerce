@@ -8,11 +8,12 @@
 import SwiftUI
 
 struct OrderListView: View {
-    @State private var didAppear = false
-    @ObservedObject var viewModel: OrdersViewModel
+    @StateObject var viewModel: OrdersViewModel
 
-    init(authenticationManager: AuthenticationManager,
-        userManager: UserManager) {
+    init(
+        authenticationManager: AuthenticationManager,
+        userManager: UserManager
+    ) {
         self._viewModel = .init(
             wrappedValue: OrdersViewModel(
                 authenticationManager: authenticationManager,
@@ -35,14 +36,9 @@ struct OrderListView: View {
             }
             .padding(.top)
         }
-        .onAppear {
-            if !didAppear {
-                viewModel.addListenerForOrders()
-                didAppear = true
-            }
-        }
-        .background(RCValues.shared
-            .color(forKey: .tabBarBackground).opacity(0.5))
+        .background(
+            RCValues.shared.color(forKey: .tabBarBackground).opacity(0.5)
+        )
         .navigationTitle("Orders")
         .navigationBarTitleDisplayMode(.inline)
     }

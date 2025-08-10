@@ -8,11 +8,25 @@
 import SwiftUI
 
 struct CategoriesListView: View {
-    var authenticationManager: AuthenticationManager
-    var userManager: UserManager
-    var productManager: ProductManager
-    var discountProductManager: DiscountProductManager
-    var category: MasterCategory? = nil
+    private let authenticationManager: AuthenticationManager
+    private let userManager: UserManager
+    private let productManager: ProductManager
+    private let discountProductManager: DiscountProductManager
+    var category: MasterCategory?
+
+    init(
+        authenticationManager: AuthenticationManager,
+        userManager: UserManager,
+        productManager: ProductManager,
+        discountProductManager: DiscountProductManager,
+        category: MasterCategory?
+    ) {
+        self.authenticationManager = authenticationManager
+        self.userManager = userManager
+        self.productManager = productManager
+        self.discountProductManager = discountProductManager
+        self.category = category
+    }
 
     var body: some View {
         List {

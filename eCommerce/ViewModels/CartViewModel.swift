@@ -7,33 +7,39 @@
 
 import Foundation
 import Combine
+import FirebaseAuth
 import FirebaseAnalytics
 
 @MainActor
 final class CartViewModel: ObservableObject {
-
     @Published var cart: Cart?
     @Published var cartItems: [CartItem] = []
-    @Published var discountedProducts: [Discount] = []
-    private let authenticationManager: AuthenticationManager
+    private var discountedProducts: [Discount] = []
+    private var userAuth: User?
     private let userManager: CartRepository
     private let productManager: ProductRepository
     private let discountProductManager: DiscountProductRepository
     private var cancellables: Set<AnyCancellable> = []
 
-    init(authenticationManager: AuthenticationManager,
-         userManager: CartRepository,
-         productManager: ProductRepository,
-         discountProductManager: DiscountProductRepository) {
-        self.authenticationManager = authenticationManager
+    init(
+        authenticationManager: AuthenticationManager,
+        userManager: CartRepository,
+        productManager: ProductRepository,
+        discountProductManager: DiscountProductRepository
+    ) {
         self.userManager = userManager
         self.productManager = productManager
         self.discountProductManager = discountProductManager
+        self.userAuth = authenticationManager.user
+        getDiscounts()
+        addListenerForCart()
+        addListenerForCartItems()
+        logEventViewCart()
     }
 
     func addListenerForCart() {
-        guard let user = authenticationManager.user else { return }
-        userManager.addListenerForCart(userId: user.uid)
+        guard let userAuth else { return }
+        userManager.addListenerForCart(userId: userAuth.uid)
             .sink { completion in
                 
             } receiveValue: { [weak self] cart in
@@ -43,8 +49,8 @@ final class CartViewModel: ObservableObject {
     }
 
     func addListenerForCartItems() {
-        guard let user = authenticationManager.user else { return }
-        userManager.addListenerForCartItems(userId: user.uid)
+        guard let userAuth else { return }
+        userManager.addListenerForCartItems(userId: userAuth.uid)
             .sink { completion in
                 
             } receiveValue: { [weak self] cartItems in
@@ -56,8 +62,8 @@ final class CartViewModel: ObservableObject {
     func removeFromCart(item: CartItem) {
         Task {
             do {
-                if let user = authenticationManager.user {
-                    try await userManager.removeFromCart(userId: user.uid, item: item)
+                if let userAuth {
+                    try await userManager.removeFromCart(userId: userAuth.uid, item: item)
                     logEventRemoveFromCart(item: item)
                 }
             } catch {
@@ -71,8 +77,8 @@ final class CartViewModel: ObservableObject {
         newQuantity += 1
         Task {
             do {
-                if let user = authenticationManager.user {
-                    try await userManager.increaseCartItemQuantity(userId: user.uid, item: item, newQuantity: newQuantity)
+                if let userAuth {
+                    try await userManager.increaseCartItemQuantity(userId: userAuth.uid, item: item, newQuantity: newQuantity)
                     logEventIncreaseQuantity(item: item)
                 }
             } catch {
@@ -86,8 +92,8 @@ final class CartViewModel: ObservableObject {
         newQuantity -= 1
         Task {
             do {
-                if let user = authenticationManager.user {
-                    try await userManager.decreaseCartItemQuantity(userId: user.uid, item: item, newQuantity: newQuantity)
+                if let userAuth {
+                    try await userManager.decreaseCartItemQuantity(userId: userAuth.uid, item: item, newQuantity: newQuantity)
                     logEventDecreaseQuantity(item: item)
                 }
             } catch {

@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct StoreView: View {
-    var authenticationManager: AuthenticationManager
-    var userManager: UserManager
-    var productManager: ProductManager
-    var discountProductManager: DiscountProductManager
+    private let authenticationManager: AuthenticationManager
+    private let userManager: UserManager
+    private let productManager: ProductManager
+    private let discountProductManager: DiscountProductManager
     @State private var searchText = ""
     @State private var isSelectingAll = false
     @State private var isSelectingCategory = false
@@ -21,6 +21,18 @@ struct StoreView: View {
         (category: MasterCategory.shoes, image: "shoes"),
         (category: MasterCategory.accessories, image: "accessories")
     ]
+
+    init(
+        authenticationManager: AuthenticationManager,
+        userManager: UserManager,
+        productManager: ProductManager,
+        discountProductManager: DiscountProductManager
+    ) {
+        self.authenticationManager = authenticationManager
+        self.userManager = userManager
+        self.productManager = productManager
+        self.discountProductManager = discountProductManager
+    }
 
     var body: some View {
         NavigationStack {
@@ -32,7 +44,10 @@ struct StoreView: View {
                 .padding(.bottom, 2)
                 VStack(spacing: 10) {
                     ForEach(categories, id: \.category) { category in
-                        StoreRowView(title: category.category.rawValue, image: category.image) {
+                        StoreRowView(
+                            title: category.category.rawValue,
+                            image: category.image
+                        ) {
                             isSelectingCategory = true
                             selectedCategory = category.category
                             isSelectingAll = false

@@ -8,36 +8,32 @@
 import SwiftUI
 
 struct ProductsListView: View {
-    var authenticationManager: AuthenticationManager
-    var userManager: UserManager
-    var category: MasterCategory?
-    var subCategory: SubCategory?
-    var showDiscountedProducts: Bool
-    var showNewInProducts: Bool
-    @State private var didAppear = false
+    private let authenticationManager: AuthenticationManager
+    private let userManager: UserManager
     @ObservedObject var viewModel: ProductsViewModel
 
-    init(authenticationManager: AuthenticationManager,
+    init(
+        authenticationManager: AuthenticationManager,
         userManager: UserManager,
         productManager: ProductManager,
         discountProductManager: DiscountProductManager,
         category: MasterCategory?,
         subCategory: SubCategory?,
         showDiscountedProducts: Bool,
-        showNewInProducts: Bool) {
+        showNewInProducts: Bool
+    ) {
         self.authenticationManager = authenticationManager
         self.userManager = userManager
-        self.category = category
-        self.subCategory = subCategory
-        self.showDiscountedProducts = showDiscountedProducts
-        self.showNewInProducts = showNewInProducts
         self._viewModel = .init(wrappedValue: ProductsViewModel(
             authenticationManager: authenticationManager,
             userManager: userManager,
             productManager: productManager,
             discountProductManager: discountProductManager,
             category: category,
-            subCategory: subCategory))
+            subCategory: subCategory,
+            showDiscountedProducts: showDiscountedProducts,
+            showNewInProducts: showNewInProducts)
+        )
     }
     
     var body: some View {
@@ -52,15 +48,12 @@ struct ProductsListView: View {
                     )
                 } label: {
                     ProductCellView(
+                        authenticationManager: authenticationManager,
+                        userManager: userManager,
                         product: product,
-                        imageName: viewModel.favoriteProducts.map { $0.id }.contains(product.id) ? "heart.fill" : "heart",
-                        color: viewModel.favoriteProducts.map { $0.id }.contains(product.id) ? .red : .gray,
-                        discount: viewModel.getDiscountForProduct(product)) {
-                            viewModel.favoriteProducts.map { $0.id }.contains(product.id)
-                            ? viewModel.removeFavoriteProduct(product)
-                            : viewModel.addFavoriteProduct(product)
-                            
-                    }
+                        productImageUrl: product.variants.map { $0.imageUrl }.first,
+                        discount: viewModel.getDiscountForProduct(product)
+                    )
                 }
                 .buttonStyle(PlainButtonStyle())
                 if product == viewModel.products.last {
@@ -73,19 +66,8 @@ struct ProductsListView: View {
         }
         .padding(.horizontal)
         .listStyle(.inset)
-        .navigationTitle(subCategory?.rawValue ?? "")
+        .navigationTitle(viewModel.subCategory?.rawValue ?? "")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            if !didAppear {
-                viewModel.addListenerForFavorites()
-                didAppear = true
-            }
-            viewModel.showDiscountedProducts = showDiscountedProducts
-            viewModel.showNewInProducts = showNewInProducts
-            viewModel.getProducts()
-            viewModel.getDiscounts()
-            viewModel.logEventViewItemList()
-        }
     }
 }
 

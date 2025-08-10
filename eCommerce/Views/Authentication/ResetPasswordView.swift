@@ -9,14 +9,16 @@ import SwiftUI
 
 struct ResetPasswordView: View {
     @Binding var showResetPassword: Bool
-    var authenticationManager: AuthenticationManager
     @ObservedObject private var viewModel: SignInViewModel
 
-    init(showResetPassword: Binding<Bool>,
-         authenticationManager: AuthenticationManager) {
+    init(
+        showResetPassword: Binding<Bool>,
+        authenticationManager: AuthenticationManager
+    ) {
         self._showResetPassword = showResetPassword
-        self.authenticationManager = authenticationManager
-        self._viewModel = .init(wrappedValue: SignInViewModel(authenticationManager: authenticationManager))
+        self._viewModel = .init(wrappedValue: SignInViewModel(
+            authenticationManager: authenticationManager)
+        )
     }
 
     var body: some View {
@@ -28,8 +30,9 @@ struct ResetPasswordView: View {
                     .padding(.vertical, 20)
                     .padding(.horizontal, 20)
                     .background(.white)
-                    .foregroundColor(RCValues.shared
-                        .color(forKey: .primary))
+                    .foregroundColor(
+                        RCValues.shared.color(forKey: .primary)
+                    )
                     .cornerRadius(10)
                 CustomTextFieldView(title: "Email", text: $viewModel.email)
                 Spacer()
@@ -56,7 +59,9 @@ struct ResetPasswordView: View {
 
 struct ResetPasswordView_Previews: PreviewProvider {
     static var previews: some View {
-        ResetPasswordView(showResetPassword: .constant(false),
-                          authenticationManager: AuthenticationManager())
+        ResetPasswordView(
+            showResetPassword: .constant(false),
+            authenticationManager: AuthenticationManager()
+        )
     }
 }

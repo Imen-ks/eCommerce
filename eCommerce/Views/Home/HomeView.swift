@@ -9,30 +9,34 @@ import SwiftUI
 
 struct HomeView: View {
     var featureImages = ["feature1", "feature2", "feature3"]
-    var authenticationManager: AuthenticationManager
-    var userManager: UserManager
-    var productManager: ProductManager
-    var discountProductManager: DiscountProductManager
-    @ObservedObject var viewModel: HomeViewModel
+    private let authenticationManager: AuthenticationManager
+    private let userManager: UserManager
+    private let productManager: ProductManager
+    private let discountProductManager: DiscountProductManager
+    @StateObject var viewModel: HomeViewModel
 
-    init(authenticationManager: AuthenticationManager,
+    init(
+        authenticationManager: AuthenticationManager,
         userManager: UserManager,
         productManager: ProductManager,
-        discountProductManager: DiscountProductManager) {
+        discountProductManager: DiscountProductManager
+    ) {
         self.authenticationManager = authenticationManager
         self.userManager = userManager
         self.productManager = productManager
         self.discountProductManager = discountProductManager
         self._viewModel = .init(wrappedValue: HomeViewModel(
             productManager: productManager,
-            discountProductManager: discountProductManager))
+            discountProductManager: discountProductManager)
+        )
     }
 
     var body: some View {
         NavigationStack {
             Rectangle()
-                .foregroundColor(RCValues.shared
-                    .color(forKey: .tabBarBackground))
+                .foregroundColor(
+                    RCValues.shared.color(forKey: .tabBarBackground)
+                )
                 .ignoresSafeArea()
                 .frame(height: 25)
             ScrollView(showsIndicators: false) {
@@ -51,8 +55,9 @@ struct HomeView: View {
                         }
                         .buttonStyle(.plain)
                     }
-                    .foregroundColor(RCValues.shared
-                        .color(forKey: .primary))
+                    .foregroundColor(
+                        RCValues.shared.color(forKey: .primary)
+                    )
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(alignment: .top, spacing: 15) {
                             ForEach(viewModel.featuredDiscountedProducts) { product in
@@ -89,8 +94,9 @@ struct HomeView: View {
                         }
                         .buttonStyle(.plain)
                     }
-                    .foregroundColor(RCValues.shared
-                        .color(forKey: .primary))
+                    .foregroundColor(
+                        RCValues.shared.color(forKey: .primary)
+                    )
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(alignment: .top, spacing: 15) {
                             ForEach(viewModel.featuredNewInProducts) { product in
@@ -139,16 +145,6 @@ struct HomeView: View {
                     showDiscountedProducts: viewModel.showDiscountedProducts,
                     showNewInProducts: viewModel.showNewInProducts
                 )
-            }
-            .onAppear {
-                viewModel.getDiscounts()
-                viewModel.getFeaturedDiscountedProducts()
-                viewModel.getFeaturedNewInProducts()
-            }
-            .onDisappear {
-                viewModel.discounts = []
-                viewModel.featuredDiscountedProducts = []
-                viewModel.featuredNewInProducts = []
             }
         }
     }

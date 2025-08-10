@@ -37,8 +37,9 @@ struct OrderDetailPersonnalInfoSectionView: View {
                     }
                 }
                 .font(.custom(AppFont.regularFont, size: 16))
-                .foregroundColor(RCValues.shared
-                    .color(forKey: .primary))
+                .foregroundColor(
+                    RCValues.shared.color(forKey: .primary)
+                )
                 .padding(.horizontal)
             }
             .padding(.vertical, 30)

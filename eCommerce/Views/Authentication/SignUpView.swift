@@ -9,25 +9,31 @@ import SwiftUI
 
 struct SignUpView: View {
     @Environment(\.dismiss) private var dismiss
+    private let authenticationManager: AuthenticationManager
+    private let userManager: UserRepository
+    private let paymentManager: PaymentManager
     @State private var showPassword = false
     @State private var showError = false
     @State private var error = ""
     @State private var isLoading = false
     @Binding var showAuthentication: Bool
-    var authenticationManager: AuthenticationManager
-    var userManager: UserRepository
-    var paymentManager: PaymentManager
     @ObservedObject private var viewModel: SignUpViewModel
 
-    init(showAuthentication: Binding<Bool>,
-         authenticationManager: AuthenticationManager,
-         userManager: UserRepository,
-         paymentManager: PaymentManager) {
-        self._showAuthentication = showAuthentication
+    init(
+        authenticationManager: AuthenticationManager,
+        userManager: UserRepository,
+        paymentManager: PaymentManager,
+        showAuthentication: Binding<Bool>
+    ) {
         self.authenticationManager = authenticationManager
         self.userManager = userManager
         self.paymentManager = paymentManager
-        self._viewModel = .init(wrappedValue: SignUpViewModel(authenticationManager: authenticationManager, userManager: userManager, paymentManager: paymentManager))
+        self._showAuthentication = showAuthentication
+        self._viewModel = .init(wrappedValue: SignUpViewModel(
+            authenticationManager: authenticationManager,
+            userManager: userManager,
+            paymentManager: paymentManager)
+        )
     }
 
     var body: some View {
@@ -44,7 +50,6 @@ struct SignUpView: View {
                            foregroundColor: .white) {
                     Task {
                         do {
-                            viewModel.logEventSignUp()
                             isLoading = true
                             try await viewModel.signUp()
                             showAuthentication = false
@@ -72,15 +77,19 @@ struct SignUpView: View {
                 HStack {
                     Text("Already have an account ?")
                         .font(.custom(AppFont.regularFont, size: 18))
-                        .foregroundColor(RCValues.shared
-                            .color(forKey: .primary))
+                        .foregroundColor(
+                            RCValues.shared.color(forKey: .primary)
+                        )
                     Button {
                         dismiss()
                     } label: {
                         Text("Sign In")
                             .font(.custom(AppFont.boldFont, size: 20))
-                            .foregroundColor(isLoading ? .gray : RCValues.shared
-                                .color(forKey: .primary))
+                            .foregroundColor(
+                                isLoading
+                                ? .gray
+                                : RCValues.shared.color(forKey: .primary)
+                            )
                             .underline()
                     }
                     .disabled(isLoading)
@@ -96,10 +105,12 @@ struct SignUpView: View {
 struct SignUpView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            SignUpView(showAuthentication: .constant(false),
-                       authenticationManager: AuthenticationManager(),
-                       userManager: UserManager(),
-                       paymentManager: PaymentManager())
+            SignUpView(
+                authenticationManager: AuthenticationManager(),
+                userManager: UserManager(),
+                paymentManager: PaymentManager(),
+                showAuthentication: .constant(false)
+            )
         }
     }
 }

@@ -32,10 +32,12 @@ struct CheckoutCartSumaryView: View {
             .padding(.leading, 25)
             .padding(.bottom)
         }
-        .background(RCValues.shared
-            .color(forKey: .tabBarBackground))
-        .foregroundColor(RCValues.shared
-            .color(forKey: .primary))
+        .background(
+            RCValues.shared.color(forKey: .tabBarBackground)
+        )
+        .foregroundColor(
+            RCValues.shared.color(forKey: .primary)
+        )
         .padding(.top)
     }
 }

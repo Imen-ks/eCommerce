@@ -20,13 +20,15 @@ struct AddOrEditShippingAddressView: View {
                 VStack(alignment: .leading) {
                     Text(field.label)
                         .font(.custom(AppFont.semiBoldFont, size: 18))
-                        .foregroundColor(RCValues.shared
-                            .color(forKey: .primary))
+                        .foregroundColor(
+                            RCValues.shared.color(forKey: .primary)
+                        )
                         .padding(.leading, 15)
                     HStack {
                         TextField("Add information", text: field.value)
-                            .foregroundColor(RCValues.shared
-                                .color(forKey: .primary))
+                            .foregroundColor(
+                                RCValues.shared.color(forKey: .primary)
+                            )
                             .padding(.leading)
                     }
                 }
@@ -44,9 +46,9 @@ struct AddOrEditShippingAddressView: View {
                 }
                 .padding(.top)
                 .buttonStyle(.borderedProminent)
-                .tint(RCValues.shared
-                    .color(forKey: .accent))
-
+                .tint(
+                    RCValues.shared.color(forKey: .accent)
+                )
             }
         }
         .padding(.top, 30)
@@ -59,8 +61,9 @@ struct AddOrEditShippingAddressView: View {
                     isAddingAddress.toggle()
                 } label: {
                     Text("Cancel")
-                        .foregroundColor(RCValues.shared
-                            .color(forKey: .accent))
+                        .foregroundColor(
+                            RCValues.shared.color(forKey: .accent)
+                        )
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -68,8 +71,9 @@ struct AddOrEditShippingAddressView: View {
                     addAction()
                 } label: {
                     Text("Save")
-                        .foregroundColor(RCValues.shared
-                            .color(forKey: .accent))
+                        .foregroundColor(
+                            RCValues.shared.color(forKey: .accent)
+                        )
                 }
             }
         }

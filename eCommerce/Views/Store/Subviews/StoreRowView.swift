@@ -21,8 +21,9 @@ struct StoreRowView: View {
             HStack {
                 Text(title)
                     .font(.custom(AppFont.semiBoldFont, size: 20))
-                    .foregroundColor(RCValues.shared
-                        .color(forKey: .primary))
+                    .foregroundColor(
+                        RCValues.shared.color(forKey: .primary)
+                    )
                     .padding(.leading, 20)
                 Spacer()
                 Image(image)
@@ -31,8 +32,9 @@ struct StoreRowView: View {
                     .frame(width: UIScreen.main.bounds.width / 2 - 15)
             }
             .frame(height: 150)
-            .background(RCValues.shared
-                .color(forKey: .secondary))
+            .background(
+                RCValues.shared.color(forKey: .secondary)
+            )
             .cornerRadius(10)
         }
     }

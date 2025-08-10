@@ -35,14 +35,16 @@ struct DeleteAccountSectionView: View {
                     .padding(.vertical, 10)
                     Divider()
                 }
-                .background(RCValues.shared
-                    .color(forKey: .accent).opacity(0.8))
+                .background(
+                    RCValues.shared.color(forKey: .accent).opacity(0.8)
+                )
                 .cornerRadius(10)
                 .padding(.leading, 10)
             } label: {
                 Image(systemName: "xmark")
-                    .foregroundColor(RCValues.shared
-                        .color(forKey: .accent))
+                    .foregroundColor(
+                        RCValues.shared.color(forKey: .accent)
+                    )
                     .frame(width: 20)
             }
         }

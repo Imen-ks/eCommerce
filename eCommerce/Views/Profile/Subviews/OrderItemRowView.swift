@@ -24,14 +24,16 @@ struct OrderItemRowView: View {
                 HStack(alignment: .top) {
                     Text(item.brand)
                         .font(.custom(AppFont.semiBoldFont, size: 15))
-                        .foregroundColor(RCValues.shared
-                            .color(forKey: .primary))
+                        .foregroundColor(
+                            RCValues.shared.color(forKey: .primary)
+                        )
                     Spacer()
                 }
                 Text(item.name)
                     .font(.custom(AppFont.regularFont, size: 12))
-                    .foregroundColor(RCValues.shared
-                        .color(forKey: .primary))
+                    .foregroundColor(
+                        RCValues.shared.color(forKey: .primary)
+                    )
                     .frame(width: 220, alignment: .leading)
                     .lineLimit(1)
                 VStack(alignment: .leading) {
@@ -39,15 +41,17 @@ struct OrderItemRowView: View {
                         Text("Color:")
                             .foregroundColor(Color(UIColor.secondaryLabel))
                         Text(item.colorName)
-                            .foregroundColor(RCValues.shared
-                                .color(forKey: .primary))
+                            .foregroundColor(
+                                RCValues.shared.color(forKey: .primary)
+                            )
                     }
                     HStack {
                         Text("Size:")
                             .foregroundColor(Color(UIColor.secondaryLabel))
                         Text(item.size)
-                            .foregroundColor(RCValues.shared
-                                .color(forKey: .primary))
+                            .foregroundColor(
+                                RCValues.shared.color(forKey: .primary)
+                            )
                     }
                 }
                 .font(.custom(AppFont.regularFont, size: 12))
@@ -56,13 +60,15 @@ struct OrderItemRowView: View {
                     Text("Quantity:")
                         .foregroundColor(Color(UIColor.secondaryLabel))
                     Text("\(item.quantity)")
-                        .foregroundColor(RCValues.shared
-                            .color(forKey: .primary))
+                        .foregroundColor(
+                            RCValues.shared.color(forKey: .primary)
+                        )
                     Spacer()
                     Text("$\(Double(item.quantity) * item.price, specifier: "%.2f")")
                         .font(.custom(AppFont.boldFont, size: 12))
-                        .foregroundColor(RCValues.shared
-                            .color(forKey: .primary))
+                        .foregroundColor(
+                            RCValues.shared.color(forKey: .primary)
+                        )
                 }
                 .font(.custom(AppFont.regularFont, size: 12))
             }

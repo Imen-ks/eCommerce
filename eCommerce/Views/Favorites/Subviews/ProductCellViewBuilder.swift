@@ -7,29 +7,50 @@
 
 import SwiftUI
 
+// View builder for Favorites View
 struct ProductCellViewBuilder: View {
+    private let authenticationManager: AuthenticationManager
+    private let userManager: UserManager
+    private let productManager: ProductManager
+    private let discountProductManager: DiscountProductManager
     let productId: String
     let discountId: String
-    let imageName: String
-    let color: Color
-    var productManager: ProductManager
-    var discountProductManager: DiscountProductManager
     @State private var product: Product? = nil
     @State private var discount: Discount? = nil
-    var action: () -> Void
+    @State private var productImageUrl: String? = nil
+
+    init(
+        authenticationManager: AuthenticationManager,
+        userManager: UserManager,
+        productManager: ProductManager,
+        discountProductManager: DiscountProductManager,
+        productId: String,
+        discountId: String
+    ) {
+        self.authenticationManager = authenticationManager
+        self.userManager = userManager
+        self.productManager = productManager
+        self.discountProductManager = discountProductManager
+        self.productId = productId
+        self.discountId = discountId
+    }
     
     var body: some View {
         ZStack {
             if let product {
-                ProductCellView(product: product,
-                                imageName: imageName,
-                                color: color,
-                                discount: discount) {
-                    action()
-                }
+                ProductCellView(
+                    authenticationManager: authenticationManager,
+                    userManager: userManager,
+                    product: product,
+                    productImageUrl: productImageUrl,
+                    discount: discount
+                )
             }
         }
         .task {
+            defer {
+                self.productImageUrl = self.product?.variants.first?.imageUrl
+            }
             self.product = try? await productManager.getProduct(productId: productId)
             self.discount = try? await discountProductManager.getDiscount(productId: productId)
         }
@@ -39,12 +60,14 @@ struct ProductCellViewBuilder: View {
 struct ProductCellViewBuilder_Previews: PreviewProvider {
     static var previews: some View {
         ScrollView {
-            ProductCellViewBuilder(productId: "10001",
-                                   discountId: "10001",
-                                   imageName: "heart.fill",
-                                   color: .red,
-                                   productManager: ProductManager(),
-                                   discountProductManager: DiscountProductManager()) {}
+            ProductCellViewBuilder(
+                authenticationManager: AuthenticationManager(),
+                userManager: UserManager(),
+                productManager: ProductManager(),
+                discountProductManager: DiscountProductManager(),
+                productId: "10001",
+                discountId: "10001"
+            )
         }
         .padding(.horizontal)
         .listStyle(.inset)

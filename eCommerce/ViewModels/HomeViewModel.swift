@@ -10,19 +10,23 @@ import FirebaseFirestore
 
 @MainActor
 final class HomeViewModel: ObservableObject {
-
-    @Published var discounts: [Discount] = []
     @Published var featuredDiscountedProducts: [Product] = []
     @Published var featuredNewInProducts: [Product] = []
     @Published var showDiscountedProducts = false
     @Published var showNewInProducts = false
+    private var discounts: [Discount] = []
     private let productManager: ProductRepository
     private let discountProductManager: DiscountProductRepository
 
-    init(productManager: ProductRepository,
-         discountProductManager: DiscountProductRepository) {
+    init(
+        productManager: ProductRepository,
+        discountProductManager: DiscountProductRepository
+    ) {
         self.productManager = productManager
         self.discountProductManager = discountProductManager
+        getDiscounts()
+        getFeaturedDiscountedProducts()
+        getFeaturedNewInProducts()
     }
 
     func getDiscounts() {

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct FavoriteProduct: Identifiable, Codable {
+struct FavoriteProduct: Identifiable, Codable, Equatable {
     let id: String
     
     enum CodingKeys: String, CodingKey {

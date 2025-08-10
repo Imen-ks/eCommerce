@@ -13,8 +13,9 @@ struct OrderCellView: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
-                .foregroundColor(RCValues.shared
-                    .color(forKey: .secondary))
+                .foregroundColor(
+                    RCValues.shared.color(forKey: .secondary)
+                )
                 .shadow(color: .secondary, radius: 1, x: 1, y: 1)
             VStack(alignment: .leading) {
                 HStack {
@@ -38,8 +39,9 @@ struct OrderCellView: View {
                 Text("N° \(order.id)")
                     .font(.custom(AppFont.lightFont, size: 13))
             }
-            .foregroundColor(RCValues.shared
-                .color(forKey: .primary))
+            .foregroundColor(
+                RCValues.shared.color(forKey: .primary)
+            )
             .padding([.vertical, .horizontal])
         }
         .padding(.bottom)
@@ -64,7 +66,8 @@ struct OrderCellView_Previews: PreviewProvider {
                                        dateCreated: Date()))
             .padding(.horizontal)
         }
-        .background(RCValues.shared
-            .color(forKey: .tabBarBackground).opacity(0.5))
+        .background(
+            RCValues.shared.color(forKey: .tabBarBackground).opacity(0.5)
+        )
     }
 }

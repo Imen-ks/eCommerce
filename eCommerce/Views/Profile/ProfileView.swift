@@ -8,10 +8,9 @@
 import SwiftUI
 
 struct ProfileView: View {
-    var authenticationManager: AuthenticationManager
-    var userManager: UserManager
+    private let authenticationManager: AuthenticationManager
+    private let userManager: UserManager
     @Binding var showAuthentication: Bool
-    @State private var didAppear = false
     @State private var isEditingPersonalInfo = false
     @State private var isAddingAddress = false
     @State private var isAddingPaymentDetails = false
@@ -20,9 +19,11 @@ struct ProfileView: View {
     @State private var showError = false
     @ObservedObject var viewModel: ProfileViewModel
 
-    init(authenticationManager: AuthenticationManager,
+    init(
+        authenticationManager: AuthenticationManager,
         userManager: UserManager,
-        showAuthentication: Binding<Bool>) {
+        showAuthentication: Binding<Bool>
+    ) {
         self.authenticationManager = authenticationManager
         self.userManager = userManager
         self._showAuthentication = showAuthentication
@@ -69,6 +70,7 @@ struct ProfileView: View {
                             showAuthentication.toggle()
                         } deleteAccountAction: {
                             viewModel.deleteAccount()
+                            showAuthentication.toggle()
                         }
                         .alert(isPresented: $showError) {
                             Alert(title: Text("User Info Update Error"), message: Text(viewModel.error), dismissButton: .default(Text("Ok")))
@@ -78,11 +80,6 @@ struct ProfileView: View {
                                 return
                             }
                             showError = true
-                        }
-                        .onChange(of: viewModel.userAuth) { newValue in
-                            if newValue == nil {
-                                showAuthentication.toggle()
-                            }
                         }
                     })
                 }
@@ -130,14 +127,6 @@ struct ProfileView: View {
             }
             .navigationTitle("My Profile")
             .navigationBarTitleDisplayMode(.inline)
-            .onAppear {
-                if !didAppear {
-                    viewModel.addListenerForShippingAddress()
-                    didAppear = true
-                }
-                viewModel.getProfile()
-                viewModel.getUser()
-            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     MenuButtonView  {

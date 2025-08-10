@@ -6,44 +6,54 @@
 //
 
 import Foundation
-import FirebaseFirestore
 import Combine
+import FirebaseAuth
+import FirebaseFirestore
 import FirebaseAnalytics
 
 @MainActor
 final class ProductsViewModel: ObservableObject {
-
+    var category: MasterCategory?
+    var subCategory: SubCategory?
+    var showDiscountedProducts: Bool
+    var showNewInProducts: Bool
     @Published var products: [Product] = []
-    @Published var discounts: [Discount] = []
-    @Published var showDiscountedProducts = false
-    @Published var showNewInProducts = false
-    @Published var favoriteProducts: [FavoriteProduct] = []
+    private var discounts: [Discount] = []
+    private var favoriteProducts: [FavoriteProduct] = []
+    private var userAuth: User?
     private var lastDocument: DocumentSnapshot? = nil
-    private var category: MasterCategory?
-    private var subCategory: SubCategory?
-    private let authenticationManager: AuthenticationManager
     private let userManager: FavoriteProductRepository
     private let productManager: ProductRepository
     private let discountProductManager: DiscountProductRepository
     private var cancellables: Set<AnyCancellable> = []
 
-    init(authenticationManager: AuthenticationManager,
-         userManager: FavoriteProductRepository,
-         productManager: ProductRepository,
-         discountProductManager: DiscountProductRepository,
-         category: MasterCategory?,
-         subCategory: SubCategory?) {
-        self.authenticationManager = authenticationManager
+    init(
+        authenticationManager: AuthenticationManager,
+        userManager: FavoriteProductRepository,
+        productManager: ProductRepository,
+        discountProductManager: DiscountProductRepository,
+        category: MasterCategory?,
+        subCategory: SubCategory?,
+        showDiscountedProducts: Bool,
+        showNewInProducts: Bool
+    ) {
         self.userManager = userManager
         self.productManager = productManager
         self.discountProductManager = discountProductManager
         self.category = category
         self.subCategory = subCategory
+        self.showDiscountedProducts = showDiscountedProducts
+        self.showNewInProducts = showNewInProducts
+        self.userAuth = authenticationManager.user
+        getProducts()
+        getDiscounts()
+        addListenerForFavorites()
+        logEventViewItemList()
     }
 
     func addListenerForFavorites() {
-        guard let user = authenticationManager.user else { return }
-        userManager.addListenerForFavoriteProducts(userId: user.uid)
+        guard let userAuth else { return }
+        userManager.addListenerForFavoriteProducts(userId: userAuth.uid)
             .sink { completion in
                 
             } receiveValue: { [weak self] products in
@@ -84,8 +94,8 @@ final class ProductsViewModel: ObservableObject {
     func addFavoriteProduct(_ product: Product) {
         Task {
             do {
-                if let user = authenticationManager.user {
-                    try await userManager.addFavoriteProduct(userId: user.uid, productId: product.id)
+                if let userAuth {
+                    try await userManager.addFavoriteProduct(userId: userAuth.uid, productId: product.id)
                     logEventAddToFavorites(product)
                 }
             } catch {
@@ -97,8 +107,8 @@ final class ProductsViewModel: ObservableObject {
     func removeFavoriteProduct(_ product: Product) {
         Task {
             do {
-                if let user = authenticationManager.user {
-                    try await userManager.removeFavoriteProduct(userId: user.uid, favoriteProductId: product.id)
+                if let userAuth {
+                    try await userManager.removeFavoriteProduct(userId: userAuth.uid, favoriteProductId: product.id)
                 }
             } catch {
                 print(error)

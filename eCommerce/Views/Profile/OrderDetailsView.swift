@@ -32,8 +32,6 @@ struct OrderDetailsView: View {
         .navigationTitle("N° \(order.id)")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            viewModel.getUser()
-            viewModel.getProfile()
             viewModel.getShippingAddressForOrder(orderId: order.id)
             viewModel.getAllOrderItemsForOrder(orderId: order.id)
         }

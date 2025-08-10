@@ -7,61 +7,41 @@
 
 import Foundation
 import Combine
+import FirebaseAuth
 
 @MainActor
 final class FavoriteProductsViewModel: ObservableObject {
-
     @Published var favoriteProducts: [FavoriteProduct] = []
-    @Published var discountedProducts: [Discount] = []
-    private let authenticationManager: AuthenticationManager
+    private var discountedProducts: [Discount] = []
+    private var userAuth: User?
     private let userManager: FavoriteProductRepository
     private let productManager: ProductRepository
     private let discountProductManager: DiscountProductRepository
     private var cancellables: Set<AnyCancellable> = []
 
-    init(authenticationManager: AuthenticationManager,
-         userManager: FavoriteProductRepository,
-         productManager: ProductRepository,
-         discountProductManager: DiscountProductRepository) {
-        self.authenticationManager = authenticationManager
+    init(
+        authenticationManager: AuthenticationManager,
+        userManager: FavoriteProductRepository,
+        productManager: ProductRepository,
+        discountProductManager: DiscountProductRepository
+    ) {
         self.userManager = userManager
         self.productManager = productManager
         self.discountProductManager = discountProductManager
+        self.userAuth = authenticationManager.user
+        getDiscounts()
+        addListenerForFavorites()
     }
 
     func addListenerForFavorites() {
-        guard let user = authenticationManager.user else { return }
-        userManager.addListenerForFavoriteProducts(userId: user.uid)
+        guard let userAuth else { return }
+        userManager.addListenerForFavoriteProducts(userId: userAuth.uid)
             .sink { completion in
                 
             } receiveValue: { [weak self] products in
                 self?.favoriteProducts = products.sorted { $0.id > $1.id }
             }
             .store(in: &cancellables)
-    }
-
-    func addFavoriteProduct(productId: String) {
-        Task {
-            do {
-                if let user = authenticationManager.user {
-                    try await userManager.addFavoriteProduct(userId: user.uid, productId: productId)
-                }
-            } catch {
-                print(error)
-            }
-        }
-    }
-
-    func removeFavoriteProduct(productId: String) {
-        Task {
-            do {
-                if let user = authenticationManager.user {
-                    try await userManager.removeFavoriteProduct(userId: user.uid, favoriteProductId: productId)
-                }
-            } catch {
-                print(error)
-            }
-        }
     }
 
     func getDiscounts() {

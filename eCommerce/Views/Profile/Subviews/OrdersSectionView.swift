@@ -17,8 +17,9 @@ struct OrdersSectionView: View {
             HStack {
                 Text("MY ORDERS")
                     .font(.custom(AppFont.semiBoldFont, size: 15))
-                    .foregroundColor(RCValues.shared
-                        .color(forKey: .primary))
+                    .foregroundColor(
+                        RCValues.shared.color(forKey: .primary)
+                    )
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.custom(AppFont.regularFont, size: 20))

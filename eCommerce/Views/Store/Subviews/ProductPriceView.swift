@@ -16,8 +16,9 @@ struct ProductPriceView: View {
             VStack(alignment: .leading) {
                 Text("$\(product.price, specifier: "%.2f")")
                     .font(.custom(AppFont.boldFont, size: 15))
-                    .foregroundColor(RCValues.shared
-                        .color(forKey: .primary))
+                    .foregroundColor(
+                        RCValues.shared.color(forKey: .primary)
+                    )
                     .strikethrough()
                 Text("$\(product.price * (1 - discount.discountPercent / 100), specifier: "%.2f")")
                     .font(.custom(AppFont.boldFont, size: 15))
@@ -27,8 +28,9 @@ struct ProductPriceView: View {
         } else {
             Text("$\(product.price, specifier: "%.2f")")
                 .font(.custom(AppFont.boldFont, size: 15))
-                .foregroundColor(RCValues.shared
-                    .color(forKey: .primary))
+                .foregroundColor(
+                    RCValues.shared.color(forKey: .primary)
+                )
                 .padding(.bottom, 15)
         }
     }

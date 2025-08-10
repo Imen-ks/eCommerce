@@ -11,45 +11,27 @@ import Combine
 
 @MainActor
 final class OrdersViewModel: ObservableObject {
-
-    @Published var userAuth: User?
-    @Published var profile: Profile?
     @Published var firstName = ""
     @Published var lastName = ""
     @Published var orders: [Order] = []
     @Published var orderItems: [OrderItem] = []
     @Published var orderShippingAddress: ShippingAddress?
-    private let authenticationManager: AuthenticationManager
+    private var userAuth: User?
     private let userManager: UserRepository & OrderRepository
     private var cancellables: Set<AnyCancellable> = []
 
-    init(authenticationManager: AuthenticationManager,
-         userManager: UserRepository & OrderRepository) {
-        self.authenticationManager = authenticationManager
+    init(
+        authenticationManager: AuthenticationManager,
+        userManager: UserRepository & OrderRepository
+    ) {
         self.userManager = userManager
-    }
-
-    func getUser() {
         self.userAuth = authenticationManager.user
-    }
-
-    func getProfile() {
-        Task {
-            do {
-                if let userAuth {
-                    self.profile = try await userManager.getUserProfile(userId: userAuth.uid)
-                    self.firstName = self.profile?.firstName ?? ""
-                    self.lastName = self.profile?.lastName ?? ""
-                }
-            } catch {
-                print(error)
-            }
-        }
+        addListenerForOrders()
     }
 
     func addListenerForOrders() {
-        guard let user = authenticationManager.user else { return }
-        userManager.addListenerForOrders(userId: user.uid)
+        guard let userAuth else { return }
+        userManager.addListenerForOrders(userId: userAuth.uid)
             .sink { completion in
                 
             } receiveValue: { [weak self] orders in

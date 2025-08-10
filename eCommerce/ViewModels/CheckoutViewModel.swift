@@ -13,13 +13,8 @@ import FirebaseAnalytics
 
 @MainActor
 final class CheckoutViewModel: ObservableObject {
-
-    @Published var userAuth: User?
-    @Published var profile: Profile?
-    @Published var cart: Cart?
-    @Published var cartItems: [CartItem] = []
-    @Published var numberOfArticles = 0
-    @Published var totalAmount = 0.0
+    let numberOfArticles: Int
+    let totalAmount: Double
     @Published var shippingAddress: ShippingAddress?
     @Published var streetNumber = ""
     @Published var streetName = ""
@@ -34,24 +29,32 @@ final class CheckoutViewModel: ObservableObject {
     @Published var paymentIsCancelled = false
     @Published var error = ""
     @Published var orderId = ""
-
-    var viewController: UIViewController? = nil
-
-    private let authenticationManager: AuthenticationManager
+    private var userAuth: User?
+    private var profile: Profile?
+    private var cart: Cart?
+    private var cartItems: [CartItem] = []
     private let userManager: UserRepository & CartRepository & OrderRepository
     private let paymentManager: PaymentManager
     private var cancellables: Set<AnyCancellable> = []
 
-    init(authenticationManager: AuthenticationManager,
-         userManager: UserRepository & CartRepository & OrderRepository,
-         paymentManager: PaymentManager) {
-        self.authenticationManager = authenticationManager
+    var viewController: UIViewController? = nil
+
+    init(
+        authenticationManager: AuthenticationManager,
+        userManager: UserRepository & CartRepository & OrderRepository,
+        paymentManager: PaymentManager,
+        numberOfArticles: Int,
+        totalAmount: Double
+    ) {
         self.userManager = userManager
         self.paymentManager = paymentManager
-    }
-
-    func getUser() {
+        self.numberOfArticles = numberOfArticles
+        self.totalAmount = totalAmount
         self.userAuth = authenticationManager.user
+        getProfile()
+        addListenerForCart()
+        addListenerForCartItems()
+        addListenerForShippingAddress()
     }
 
     func getProfile() {
@@ -67,8 +70,8 @@ final class CheckoutViewModel: ObservableObject {
     }
 
     func addListenerForCart() {
-        guard let user = authenticationManager.user else { return }
-        userManager.addListenerForCart(userId: user.uid)
+        guard let userAuth else { return }
+        userManager.addListenerForCart(userId: userAuth.uid)
             .sink { completion in
                 
             } receiveValue: { [weak self] cart in
@@ -78,8 +81,8 @@ final class CheckoutViewModel: ObservableObject {
     }
 
     func addListenerForCartItems() {
-        guard let user = authenticationManager.user else { return }
-        userManager.addListenerForCartItems(userId: user.uid)
+        guard let userAuth else { return }
+        userManager.addListenerForCartItems(userId: userAuth.uid)
             .sink { completion in
                 
             } receiveValue: { [weak self] cartItems in
@@ -89,8 +92,8 @@ final class CheckoutViewModel: ObservableObject {
     }
 
     func addListenerForShippingAddress() {
-        guard let user = authenticationManager.user else { return }
-        userManager.addListenerForShippingAddress(userId: user.uid)
+        guard let userAuth else { return }
+        userManager.addListenerForShippingAddress(userId: userAuth.uid)
             .sink { completion in
                 
             } receiveValue: { [weak self] address in
@@ -117,6 +120,7 @@ final class CheckoutViewModel: ObservableObject {
                         country: country)
                     try await userManager.addShippingAddress(
                         userId: userAuth.uid, address: address)
+                    logEventAddShippingInfo()
                 }
             } catch {
                 print(error)
