@@ -17,17 +17,19 @@ final class ProfileViewModel: ObservableObject {
     @Published var firstName = ""
     @Published var lastName = ""
     @Published var phoneNumber = ""
-    @Published var email = ""
-    @Published var password = ""
+    @Published var newEmail = ""
+    @Published var currentPassword = ""
+    @Published var newPassword = ""
     @Published var error = ""
-    @Published var passwordIsChanged = false
-    @Published var emailIsChanged = false
+    @Published var passwordIsUpdated = false
+    @Published var emailUpdateIsRequested = false
+    @Published var emailIsUpdated = false
     @Published var streetNumber = ""
     @Published var streetName = ""
     @Published var postalCode = ""
     @Published var town = ""
     @Published var country = ""
-    var emailUpdateSteps = 0
+    @Published var userIsUnauthorized = false
     private var userAuth: User?
     private let authenticationManager: AuthenticationManager
     private let userManager: UserRepository
@@ -39,16 +41,25 @@ final class ProfileViewModel: ObservableObject {
     ) {
         self.authenticationManager = authenticationManager
         self.userManager = userManager
-        self.userAuth = authenticationManager.user
         getProfile()
         addListenerForShippingAddress()
+        authenticationManager.$user.sink { user in
+            guard let user else { return }
+            self.userAuth = user
+            guard let email = user.email else { return }
+            if email != self.profile?.email {
+                Task {
+                    try await userManager.updateUserEmail(
+                        userId: user.uid, email: email)
+                    self.getProfile()
+                }
+            }
+        }
+        .store(in: &cancellables)
     }
 
     func getUserAuthEmail() -> String {
-        if let userAuth {
-            return userAuth.email ?? ""
-        }
-        return ""
+        userAuth?.email ?? ""
     }
 
     func getProfile() {
@@ -67,60 +78,68 @@ final class ProfileViewModel: ObservableObject {
     }
 
     func updateUserInfo() {
-        if let userAuth {
-            Task {
-                do {
+        Task {
+            do {
+                if let userAuth {
                     try await userManager.updateUserInfo(
                         userId: userAuth.uid,
                         firstName: firstName,
                         lastName: lastName,
                         phoneNumber: phoneNumber)
-                } catch let(error) {
-                    self.error = error.localizedDescription
                 }
+            } catch let(error) {
+                self.error = error.localizedDescription
             }
         }
     }
 
-    func updateEmail() {
-        if let userAuth {
-            Task {
-                if userAuth.email != email || userAuth.email != profile?.email  {
-                    do {
-                        try await authenticationManager.updateEmail(email: email)
-                        emailUpdateSteps += 1
-                        if emailUpdateSteps == 2 {
-                            self.emailIsChanged = true
-                            emailUpdateSteps = 0
-                        }
-                    } catch let(error) {
-                        self.error = error.localizedDescription
-                    }
-                }
+    func sendUpdateLink() {
+        Task {
+            guard let userAuth, let currentEmail = userAuth.email else {
+                return
             }
-            Task {
-                if profile?.email != email || userAuth.email != profile?.email {
-                    do {
-                        try await userManager.updateUserEmail(
-                            userId: userAuth.uid, email: email)
-                        emailUpdateSteps += 1
-                        if emailUpdateSteps == 2 {
-                            self.emailIsChanged = true
-                            emailUpdateSteps = 0
-                        }
-                    } catch let(error) {
-                        self.error = error.localizedDescription
+            authenticationManager.reauthenticate(
+                user: userAuth,
+                email: currentEmail,
+                password: currentPassword) { [weak self] _, error in
+                    if error != nil {
+                        self?.removeUserAuth()
+                        self?.signOut()
+                        return
                     }
-                }
+            }
+            do {
+                try await authenticationManager.sendUpdateLink(
+                    to: newEmail)
+                emailUpdateIsRequested = true
+            } catch {
+                self.error = error.localizedDescription
             }
         }
+    }
+
+    func reloadUser() {
+        guard let userAuth else {
+            removeUserAuth()
+            return
+        }
+        authenticationManager.reauthenticate(
+            user: userAuth,
+            email: newEmail,
+            password: currentPassword) { [weak self] result, _ in
+                if result != nil {
+                    self?.emailIsUpdated = true
+                    self?.authenticationManager.reload()
+                }
+            }
     }
 
     func updatePassword() {
         Task {
             do {
-                try await authenticationManager.updatePassword(password: password)
-                self.passwordIsChanged = true
+                try await authenticationManager.updatePassword(
+                    with: newPassword)
+                self.passwordIsUpdated = true
             } catch {
                 self.error = error.localizedDescription
             }
@@ -130,6 +149,7 @@ final class ProfileViewModel: ObservableObject {
     func signOut() {
         do {
             try authenticationManager.signOut()
+            removeUserAuth()
         } catch {
             self.error = error.localizedDescription
         }
@@ -139,10 +159,15 @@ final class ProfileViewModel: ObservableObject {
         Task {
             do {
                 try await authenticationManager.delete()
+                removeUserAuth()
             } catch let(error) {
                 self.error = error.localizedDescription
             }
         }
+    }
+
+    func removeUserAuth() {
+        userIsUnauthorized = true
     }
 
     func addListenerForShippingAddress() {
@@ -174,6 +199,7 @@ final class ProfileViewModel: ObservableObject {
                         country: country)
                     try await userManager.addShippingAddress(
                         userId: userAuth.uid, address: address)
+                    logEventAddShippingInfo()
                 }
             } catch {
                 print(error)

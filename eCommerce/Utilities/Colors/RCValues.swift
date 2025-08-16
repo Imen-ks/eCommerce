@@ -57,7 +57,7 @@ class RCValues {
 
     func color(forKey key: ValueKey) -> Color {
         let colorAsHexString = remoteConfig.configValue(forKey: key.rawValue)
-            .stringValue ?? "Undefined"
+            .stringValue
         let convertedColor = Color.init(hex: colorAsHexString)
         return convertedColor
     }

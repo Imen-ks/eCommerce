@@ -11,10 +11,10 @@ import FirebaseAuth
 struct Profile: Codable {
     let uid: String
     let email: String?
-    let firstName: String?
-    let lastName: String?
+    let firstName: String
+    let lastName: String
     let phoneNumber: String?
-    let dateCreated: Date?
+    let dateCreated: Date
     let favoriteProducts: [FavoriteProduct]?
     let cart: Cart?
     let shippingAddress: ShippingAddress?
@@ -37,11 +37,10 @@ struct Profile: Codable {
     }
     
     init(uid: String,
-         email: String? = nil,
-         firstName: String? = nil,
-         lastName: String? = nil,
+         email: String,
+         firstName: String,
+         lastName: String,
          phoneNumber: String? = nil,
-         dateCreated: Date? = nil,
          favoriteProducts: [FavoriteProduct]? = nil,
          cart: Cart? = nil,
          shippingAddress: ShippingAddress? = nil,
@@ -51,7 +50,7 @@ struct Profile: Codable {
         self.firstName = firstName
         self.lastName = lastName
         self.phoneNumber = phoneNumber
-        self.dateCreated = dateCreated
+        self.dateCreated = Date()
         self.favoriteProducts = favoriteProducts
         self.cart = cart
         self.shippingAddress = shippingAddress

@@ -7,11 +7,9 @@
 
 import Foundation
 import FirebaseFirestore
-import FirebaseFirestoreSwift
 import Combine
 
 extension Query {
-
     func getDocuments<T: Decodable>(as type: T.Type) async throws -> [T] {
         try await getDocumentsWithSnapshot(as: type).products
     }

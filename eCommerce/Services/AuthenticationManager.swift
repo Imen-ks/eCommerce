@@ -9,15 +9,14 @@ import Foundation
 import FirebaseAuth
 
 final class AuthenticationManager: ObservableObject {
-    
-    var user: User?
+    @Published var user: User?
     private var authenticationStateHandle: AuthStateDidChangeListenerHandle?
 
     init() {
-        addListner()
+        addListener()
     }
 
-    private func addListner() {
+    private func addListener() {
         if let handle = authenticationStateHandle {
             Auth.auth().removeStateDidChangeListener(handle)
         }
@@ -46,24 +45,48 @@ final class AuthenticationManager: ObservableObject {
         try await Auth.auth().sendPasswordReset(withEmail: email)
     }
     
-    func updatePassword(password: String) async throws {
-        guard let user = user else {
+    func updatePassword(with password: String) async throws {
+        guard let user else {
             fatalError("No user logged in")
         }
         try await user.updatePassword(to: password)
     }
 
-    func updateEmail(email: String) async throws {
-        guard let user = user else {
+    func sendUpdateLink(to newEmail: String) async throws {
+        guard let user else {
             fatalError("No user logged in")
         }
-        try await user.updateEmail(to: email)
+        let actionCodeSettings = FirebaseAuth.ActionCodeSettings()
+        actionCodeSettings.url = URL(string: "https://ecommerceapp-b752b.web.app/updateEmail")!
+        actionCodeSettings.handleCodeInApp = true
+        actionCodeSettings.setIOSBundleID(Bundle.main.bundleIdentifier!)
+        try await user.sendEmailVerification(beforeUpdatingEmail: newEmail, actionCodeSettings: actionCodeSettings)
     }
 
     func delete() async throws {
-        guard let user = user else {
+        guard let user else {
             fatalError("No user logged in")
         }
         try await user.delete()
+    }
+
+    func reauthenticate(
+        user: User,
+        email: String,
+        password: String,
+        completion: ((AuthDataResult?, (any Error)?) -> Void)?) {
+        let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+        user.reauthenticate(with: credential, completion: completion)
+    }
+
+    func reload() {
+        guard let user else {
+            fatalError("No user logged in")
+        }
+        user.reload { error in
+            if error == nil {
+                self.user = Auth.auth().currentUser
+            }
+        }
     }
 }

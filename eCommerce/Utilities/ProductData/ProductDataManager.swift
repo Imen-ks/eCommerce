@@ -21,7 +21,7 @@ final class ProductDataManager {
             do {
                 try await firebaseProductManager.uploadProduct(product: product)
             } catch {
-                print(String(describing: error))
+                print(error)
             }
         }
     }
@@ -31,7 +31,7 @@ final class ProductDataManager {
             do {
                 try await firebaseDiscountProductManager.uploadDiscount(discount: discount)
             } catch {
-                print(String(describing: error))
+                print(error)
             }
         }
     }
@@ -41,7 +41,7 @@ final class ProductDataManager {
             do {
                 try await firebaseNewInProductManager.uploadNewIn(newIn: newIn)
             } catch {
-                print(String(describing: error))
+                print(error)
             }
         }
     }
@@ -51,7 +51,7 @@ final class ProductDataManager {
             do {
                 try await firebaseProductManager.updateProductWithDiscount(productId: discount.id)
             } catch {
-                print(String(describing: error))
+                print(error)
             }
         }
     }
@@ -61,7 +61,7 @@ final class ProductDataManager {
             do {
                 try await firebaseProductManager.updateNewInProduct(productId: newIn.id)
             } catch {
-                print(String(describing: error))
+                print(error)
             }
         }
     }

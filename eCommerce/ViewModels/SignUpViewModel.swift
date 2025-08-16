@@ -31,7 +31,6 @@ final class SignUpViewModel: ObservableObject {
 
     func signUp() async throws {
         guard !email.isEmpty, !password.isEmpty else {
-            print("No email or password found.")
             return
         }
         let user = try await authenticationManager.register(email: email, password: password)

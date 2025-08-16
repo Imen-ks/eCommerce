@@ -7,7 +7,6 @@
 
 import Foundation
 import FirebaseFirestore
-import FirebaseFirestoreSwift
 
 final class ProductManager: ProductRepository {    
     internal let productsCollection = Firestore.firestore().collection("products")

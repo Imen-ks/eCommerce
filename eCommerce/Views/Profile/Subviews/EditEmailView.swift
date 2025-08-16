@@ -8,40 +8,42 @@
 import SwiftUI
 
 struct EditEmailView: View {
-    @State private var isChangingEmail = false
-    @Binding var email: String
-    @Binding var emailIsChanged: Bool
+    @Binding var updateRequestType: UpdateRequestType
+    @Binding var currentPassword: String
+    @Binding var newEmail: String
+    @Binding var emailUpdateIsRequested: Bool
+    @Binding var emailIsUpdated: Bool
     @Binding var showError: Bool
     @Binding var error: String
     let action: () -> Void
 
     var body: some View {
         VStack {
-            VStack {
-                if !isChangingEmail {
-                    Button {
-                        isChangingEmail.toggle()
-                    } label: {
-                        Text("Change email")
-                            .font(.custom(AppFont.semiBoldFont, size: 18))
-                            .foregroundColor(
-                                RCValues.shared.color(forKey: .primary)
-                            )
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 5)
-                    }
-                    .buttonStyle(.bordered)
-                    .padding(.leading, 40)
-                    .tint(
-                        RCValues.shared.color(forKey: .primary)
-                    )
-                } else if isChangingEmail && !emailIsChanged {
+            if updateRequestType != .email {
+                Button {
+                    updateRequestType = .email
+                } label: {
+                    Text("Change email")
+                        .font(.custom(AppFont.semiBoldFont, size: 18))
+                        .foregroundColor(
+                            RCValues.shared.color(forKey: .primary)
+                        )
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 5)
+                }
+                .buttonStyle(.bordered)
+                .padding(.leading, 40)
+                .tint(
+                    RCValues.shared.color(forKey: .primary)
+                )
+            } else if updateRequestType == .email {
+                if !emailUpdateIsRequested {
                     VStack(alignment: .leading) {
                         Text("New Email")
                             .foregroundColor(.secondary)
                             .padding(.leading, 45)
                         LabeledContent {
-                            CustomTextFieldView(title: "Enter a new email", text: $email)
+                            CustomTextFieldView(title: "Enter a new valid email", text: $newEmail)
                                 .padding(.leading)
                         } label: {
                             Image(systemName: "envelope")
@@ -50,11 +52,30 @@ struct EditEmailView: View {
                                 )
                                 .frame(width: 20)
                         }
+                        LabeledContent {
+                            CustomSecureFieldView(title: "Enter your current password", text: $currentPassword)
+                                .padding(.leading)
+                        } label: {
+                            Image(systemName: "key")
+                                .foregroundColor(
+                                    RCValues.shared.color(forKey: .accent)
+                                )
+                                .frame(width: 20)
+                        }
                     }
                     Button {
-                        action()
+                        if !newEmail.isValidEmail() {
+                            let message = "Please enter a valid email"
+                            showError(with: message)
+                        } else if currentPassword.count < 6 {
+                            let message = "Password must be at least 6 characters long"
+                            showError(with: message)
+                            currentPassword = ""
+                        }  else {
+                            action()
+                        }
                     } label: {
-                        Text("Save")
+                        Text("Request update")
                             .font(.custom(AppFont.semiBoldFont, size: 18))
                             .foregroundColor(
                                 RCValues.shared.color(forKey: .primary)
@@ -67,14 +88,20 @@ struct EditEmailView: View {
                     .tint(
                         RCValues.shared.color(forKey: .accent)
                     )
-                } else if emailIsChanged {
+                } else {
                     Label {
-                        Text("Email has been changed")
-                            .font(.custom(AppFont.semiBoldFont, size: 18))
-                            .foregroundColor(
-                                RCValues.shared.color(forKey: .primary)
-                            )
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Group {
+                            if emailUpdateIsRequested && !emailIsUpdated {
+                                Text("Request sent to your current email address. Click on the link received to proceed with update.")
+                            } else if emailIsUpdated {
+                                Text("Email has been changed")
+                            }
+                        }
+                        .font(.custom(AppFont.semiBoldFont, size: 18))
+                        .foregroundColor(
+                            RCValues.shared.color(forKey: .primary)
+                        )
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     } icon: {
                         Image(systemName: "checkmark")
                             .foregroundColor(.green)
@@ -82,21 +109,27 @@ struct EditEmailView: View {
                     .padding(.leading, 40)
                 }
             }
-            .padding(.horizontal)
-            .alert(isPresented: $showError) {
-                Alert(title: Text("Email Update Error"), message: Text(error), dismissButton: .default(Text("Ok")))
-            }
-            .padding(.vertical, 10)
-            Divider()
         }
+        .padding(.horizontal)
+        .padding(.vertical, 10)
+        Divider()
+    }
+    private func showError(with message: String) {
+        if error == message { showError = true }
+        else { error = message }
     }
 }
 
 struct EditEmailView_Previews: PreviewProvider {
     static var previews: some View {
-        EditEmailView(email: .constant("jane@doe.com"),
-                      emailIsChanged: .constant(false),
-                      showError: .constant(false),
-                      error: .constant("")) {}
+        EditEmailView(
+            updateRequestType: .constant(.none),
+            currentPassword: .constant("janedoe"),
+            newEmail: .constant("jane@doe.com"),
+            emailUpdateIsRequested: .constant(false),
+            emailIsUpdated: .constant(false),
+            showError: .constant(false),
+            error: .constant("")
+        ) {}
     }
 }

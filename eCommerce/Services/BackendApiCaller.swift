@@ -25,7 +25,7 @@ struct BackendApi {
             request.httpBody = try JSONEncoder().encode(parameters)
             return request
         } catch {
-            print(error.localizedDescription)
+            print(error)
             return nil
         }
     }

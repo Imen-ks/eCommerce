@@ -8,16 +8,16 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @Environment(\.scenePhase) private var scenePhase
     private let authenticationManager: AuthenticationManager
     private let userManager: UserManager
     @Binding var showAuthentication: Bool
     @State private var isEditingPersonalInfo = false
     @State private var isAddingAddress = false
-    @State private var isAddingPaymentDetails = false
     @State private var isShowingOrders = false
     @State private var isShowingAppSettings = false
     @State private var showError = false
-    @ObservedObject var viewModel: ProfileViewModel
+    @StateObject var viewModel: ProfileViewModel
 
     init(
         authenticationManager: AuthenticationManager,
@@ -38,40 +38,15 @@ struct ProfileView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                PersonalInfoView(
-                    firstName: viewModel.profile?.firstName ?? "",
-                    lastName: viewModel.profile?.lastName ?? "",
-                    email: viewModel.getUserAuthEmail())
+                PersonalInfoView(profile: viewModel.profile)
                 .overlay(alignment: .topTrailing) {
                     ButtonEditPersonalInfoView(isEditingPersonalInfo: $isEditingPersonalInfo)
                     .navigationDestination(isPresented: $isEditingPersonalInfo, destination: {
                         EditPersonalInfoView(
-                            fields: [
-                                (icon: "person", label: "First Name", value: $viewModel.firstName),
-                                (icon: "person", label: "Last Name", value: $viewModel.lastName),
-                                (icon: "phone", label: "Phone Number", value: $viewModel.phoneNumber)
-                            ],
-                            currentEmail: viewModel.getUserAuthEmail(),
                             isEditingPersonalInfo: $isEditingPersonalInfo,
-                            newPassword: $viewModel.password,
-                            passwordIsChanged: $viewModel.passwordIsChanged,
-                            newEmail: $viewModel.email,
-                            emailIsChanged: $viewModel.emailIsChanged,
                             showError: $showError,
-                            error: $viewModel.error
-                        ) {
-                            viewModel.updateUserInfo()
-                        } changeEmailAction: {
-                            viewModel.updateEmail()
-                        } changePasswordAction: {
-                            viewModel.updatePassword()
-                        } signOutAction: {
-                            viewModel.signOut()
-                            showAuthentication.toggle()
-                        } deleteAccountAction: {
-                            viewModel.deleteAccount()
-                            showAuthentication.toggle()
-                        }
+                            viewModel: viewModel
+                        )
                         .alert(isPresented: $showError) {
                             Alert(title: Text("User Info Update Error"), message: Text(viewModel.error), dismissButton: .default(Text("Ok")))
                         }
@@ -84,19 +59,17 @@ struct ProfileView: View {
                     })
                 }
                 ShippingAddressSectionView(
-                    fields:
-                        [
-                            (label: "Street Number", value: $viewModel.streetNumber),
-                            (label: "Street Name", value: $viewModel.streetName),
-                            (label: "Postal Code", value: $viewModel.postalCode),
-                            (label: "Town", value: $viewModel.town),
-                            (label: "Country", value: $viewModel.country)
-                        ],
+                    fields: [
+                        (label: "Street Number", value: $viewModel.streetNumber),
+                        (label: "Street Name", value: $viewModel.streetName),
+                        (label: "Postal Code", value: $viewModel.postalCode),
+                        (label: "Town", value: $viewModel.town),
+                        (label: "Country", value: $viewModel.country)
+                    ],
                     isAddingAddress: $isAddingAddress,
                     shippingAddress: viewModel.shippingAddress
                 ) {
                     viewModel.addShippingAddress()
-                    viewModel.logEventAddShippingInfo()
                     isAddingAddress.toggle()
                 } removeAction: {
                     viewModel.removeShippingAddress()
@@ -131,8 +104,15 @@ struct ProfileView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     MenuButtonView  {
                         viewModel.signOut()
-                        showAuthentication.toggle()
                     }
+                }
+            }
+            .onChange(of: viewModel.userIsUnauthorized) { _ in
+                showAuthentication.toggle()
+            }
+            .onChange(of: scenePhase) { newPhase in
+                if newPhase == .active {
+                    viewModel.reloadUser()
                 }
             }
         }

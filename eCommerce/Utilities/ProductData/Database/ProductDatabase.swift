@@ -1325,7 +1325,7 @@ This watch, crafted from robust ionic-plated stainless steel, is both a durable 
                 sizes: accessoriesSizes,
                 variants: [
                     ProductVariant(color: Color.yellow, colorName: "Gold", imageUrl: "https://firebasestorage.googleapis.com/v0/b/ecommerceapp-b752b.appspot.com/o/10117-1.png?alt=media&token=aa67c5d6-713c-4b8a-80a0-bd0b9b92af0e"),
-                    ProductVariant(color: Color.black, colorName: "Blue", imageUrl: "https://firebasestorage.googleapis.com/v0/b/ecommerceapp-b752b.appspot.com/o/10117-2.png?alt=media&token=8a4d3fee-3946-40be-977e-1acfc324518c")]),
+                    ProductVariant(color: Color.blue, colorName: "Blue", imageUrl: "https://firebasestorage.googleapis.com/v0/b/ecommerceapp-b752b.appspot.com/o/10117-2.png?alt=media&token=8a4d3fee-3946-40be-977e-1acfc324518c")]),
         Product(id: "10118", name: "Luxe Leather Monogram Belt",
                 price: 69, brand: Brand.tommy.rawValue, gender: Gender.women.rawValue,
                 category: MasterCategory.accessories.rawValue , subCategory: SubCategory.belts.rawValue,

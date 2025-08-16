@@ -7,7 +7,6 @@
 
 import Foundation
 import FirebaseFirestore
-import FirebaseFirestoreSwift
 
 final class DiscountProductManager: DiscountProductRepository {
     internal let discountsCollection = Firestore.firestore().collection("discounts")

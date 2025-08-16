@@ -8,21 +8,13 @@
 import SwiftUI
 
 struct EditPersonalInfoView: View {
-    var fields: [(icon: String, label: String, value: Binding<String>)]
-    var currentEmail: String?
+    @Environment(\.scenePhase) private var scenePhase
     @Binding var isEditingPersonalInfo: Bool
-    @Binding var newPassword: String
-    @Binding var passwordIsChanged: Bool
-    @Binding var newEmail: String
-    @Binding var emailIsChanged: Bool
     @Binding var showError: Bool
-    @Binding var error: String
+    @State private var fields: [(icon: String, label: String, value: Binding<String>)] = []
+    @State private var updateRequestType: UpdateRequestType = .none
     @State private var isShowingDeleteAccount = false
-    let savePersonalInfoAction: () -> Void
-    let changeEmailAction: () -> Void
-    let changePasswordAction: () -> Void
-    let signOutAction: () -> Void
-    let deleteAccountAction: () -> Void
+    @ObservedObject var viewModel: ProfileViewModel
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -50,7 +42,8 @@ struct EditPersonalInfoView: View {
                 }
                 .padding(.horizontal)
                 .onChange(of: field.value.wrappedValue) { newValue in
-                    savePersonalInfoAction()
+                    viewModel.updateUserInfo()
+                    viewModel.getProfile()
                 }
                 Divider()
                     .padding(.vertical, 10)
@@ -61,7 +54,7 @@ struct EditPersonalInfoView: View {
                     .padding(.leading, 45)
                 LabeledContent {
                     HStack {
-                        Text(currentEmail ?? "")
+                        Text(viewModel.getUserAuthEmail())
                             .foregroundColor(.secondary)
                             .padding(.leading)
                         Spacer()
@@ -77,35 +70,47 @@ struct EditPersonalInfoView: View {
             .padding(.horizontal)
             .padding(.bottom, 10)
             Divider()
-            EditEmailView(email: $newEmail,
-                          emailIsChanged: $emailIsChanged,
-                          showError: $showError,
-                          error: $error) { changeEmailAction() }
+            EditEmailView(
+                updateRequestType: $updateRequestType,
+                currentPassword: $viewModel.currentPassword,
+                newEmail: $viewModel.newEmail,
+                emailUpdateIsRequested: $viewModel.emailUpdateIsRequested,
+                emailIsUpdated: $viewModel.emailIsUpdated,
+                showError: $showError,
+                error: $viewModel.error
+            ) {
+                if viewModel.getUserAuthEmail() != viewModel.newEmail {
+                    viewModel.sendUpdateLink()
+                } else {
+                    viewModel.error = "Email is the same as current email"
+                    viewModel.currentPassword = ""
+                }
+            }
             
-            EditPasswordView(password: $newPassword,
-                             passwordIsChanged: $passwordIsChanged,
-                             showError: $showError,
-                             error: $error) { changePasswordAction() }
+            EditPasswordView(
+                updateRequestType: $updateRequestType,
+                password: $viewModel.newPassword,
+                passwordIsUpdated: $viewModel.passwordIsUpdated,
+                showError: $showError,
+                error: $viewModel.error
+            ) {
+                viewModel.updatePassword()
+            }
             SignOutButtonView {
-                signOutAction()
+                viewModel.signOut()
+                viewModel.userIsUnauthorized = true
             }
             .padding(.bottom, 10)
-            DeleteAccountSectionView {
-                isShowingDeleteAccount.toggle()
-            }
+            DeleteAccountSectionView { isShowingDeleteAccount.toggle() }
             .navigationDestination(isPresented: $isShowingDeleteAccount) {
-                DeleteAccountView(isShowingDeleteAccount: $isShowingDeleteAccount) {
-                    deleteAccountAction()
+                DeleteAccountView(
+                    isShowingDeleteAccount: $isShowingDeleteAccount
+                ) {
+                    viewModel.deleteAccount()
                 }
             }
         }
         .padding(.horizontal)
-        .onDisappear {
-            emailIsChanged = false
-            passwordIsChanged = false
-            newEmail = ""
-            newPassword = ""
-        }
         .navigationTitle("Personal Information")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
@@ -118,29 +123,36 @@ struct EditPersonalInfoView: View {
                 }
             }
         }
+        .onAppear {
+            self.fields = [
+                (icon: "person", label: "First Name", value: $viewModel.firstName),
+                (icon: "person", label: "Last Name", value: $viewModel.lastName),
+                (icon: "phone", label: "Phone Number", value: $viewModel.phoneNumber)
+            ]
+        }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active, viewModel.emailUpdateIsRequested {
+                viewModel.reloadUser()
+            }
+        }
     }
 }
 
 struct EditPersonalInfoView_Previews: PreviewProvider {
     static var user = AuthenticationManager().user
     static var previews: some View {
-        EditPersonalInfoView(fields:
-                                [
-                                    (icon: "person", label: "First Name", value: .constant("Jane")),
-                                    (icon: "person", label: "Last Name", value: .constant("Doe")),
-                                    (icon: "phone", label: "Phone Number", value: .constant("555-555-555"))
-                                ],
-                             currentEmail: "jane@doe.com",
-                             isEditingPersonalInfo: .constant(false),
-                             newPassword: .constant("janedoe"),
-                             passwordIsChanged: .constant(false),
-                             newEmail: .constant("jane@doe.com"),
-                             emailIsChanged: .constant(false),
-                             showError: .constant(false),
-                             error: .constant("")) {
-        } changeEmailAction: {
-        } changePasswordAction: {
-        } signOutAction: {
-        } deleteAccountAction: {}
+        EditPersonalInfoView(
+            isEditingPersonalInfo: .constant(false),
+            showError: .constant(false),
+            viewModel: ProfileViewModel(
+                authenticationManager: AuthenticationManager(),
+                userManager: UserManager())
+        )
     }
+}
+
+enum UpdateRequestType {
+    case email
+    case password
+    case none
 }
