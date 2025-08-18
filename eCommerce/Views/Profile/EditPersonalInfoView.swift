@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct EditPersonalInfoView: View {
-    @Environment(\.scenePhase) private var scenePhase
+    @EnvironmentObject var router: DeepLinkManager
     @Binding var isEditingPersonalInfo: Bool
     @Binding var showError: Bool
     @State private var fields: [(icon: String, label: String, value: Binding<String>)] = []
@@ -130,8 +130,8 @@ struct EditPersonalInfoView: View {
                 (icon: "phone", label: "Phone Number", value: $viewModel.phoneNumber)
             ]
         }
-        .onChange(of: scenePhase) { newPhase in
-            if newPhase == .active, viewModel.emailUpdateIsRequested {
+        .onReceive(router.$emailLinkVerificationHandled) { newValue in
+            if newValue == true {
                 viewModel.reloadUser()
             }
         }
@@ -147,7 +147,7 @@ struct EditPersonalInfoView_Previews: PreviewProvider {
             viewModel: ProfileViewModel(
                 authenticationManager: AuthenticationManager(),
                 userManager: UserManager())
-        )
+        ).environmentObject(DeepLinkManager())
     }
 }
 

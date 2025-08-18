@@ -20,10 +20,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct eCommerceApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject private var router = DeepLinkManager()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(router)
+                .onOpenURL { url in
+                    router.handleFirebaseAuthLink(url)
+                }
         }
     }
 }

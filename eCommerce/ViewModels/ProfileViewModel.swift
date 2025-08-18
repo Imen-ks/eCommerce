@@ -99,7 +99,6 @@ final class ProfileViewModel: ObservableObject {
                 return
             }
             authenticationManager.reauthenticate(
-                user: userAuth,
                 email: currentEmail,
                 password: currentPassword) { [weak self] _, error in
                     if error != nil {
@@ -119,12 +118,7 @@ final class ProfileViewModel: ObservableObject {
     }
 
     func reloadUser() {
-        guard let userAuth else {
-            removeUserAuth()
-            return
-        }
         authenticationManager.reauthenticate(
-            user: userAuth,
             email: newEmail,
             password: currentPassword) { [weak self] result, _ in
                 if result != nil {

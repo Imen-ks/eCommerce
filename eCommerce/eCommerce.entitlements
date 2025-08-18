@@ -5,6 +5,7 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:ecommerceapp-b752b.web.app</string>
+		<string>applinks:ecommerceapp-b752b.firebaseapp.com</string>
 	</array>
 </dict>
 </plist>

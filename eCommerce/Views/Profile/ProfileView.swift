@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @Environment(\.scenePhase) private var scenePhase
+    @EnvironmentObject var router: DeepLinkManager
     private let authenticationManager: AuthenticationManager
     private let userManager: UserManager
     @Binding var showAuthentication: Bool
@@ -110,8 +110,8 @@ struct ProfileView: View {
             .onChange(of: viewModel.userIsUnauthorized) { _ in
                 showAuthentication.toggle()
             }
-            .onChange(of: scenePhase) { newPhase in
-                if newPhase == .active {
+            .onReceive(router.$emailLinkVerificationHandled) { newValue in
+                if newValue == true {
                     viewModel.reloadUser()
                 }
             }
@@ -125,6 +125,6 @@ struct ProfileView_Previews: PreviewProvider {
             authenticationManager: AuthenticationManager(),
             userManager: UserManager(),
             showAuthentication: .constant(false)
-        )
+        ).environmentObject(DeepLinkManager())
     }
 }

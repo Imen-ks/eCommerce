@@ -57,7 +57,7 @@ final class AuthenticationManager: ObservableObject {
             fatalError("No user logged in")
         }
         let actionCodeSettings = FirebaseAuth.ActionCodeSettings()
-        actionCodeSettings.url = URL(string: "https://ecommerceapp-b752b.web.app/updateEmail")!
+        actionCodeSettings.url = URL(string: "https://ecommerceapp-b752b.web.app/")!
         actionCodeSettings.handleCodeInApp = true
         actionCodeSettings.setIOSBundleID(Bundle.main.bundleIdentifier!)
         try await user.sendEmailVerification(beforeUpdatingEmail: newEmail, actionCodeSettings: actionCodeSettings)
@@ -71,10 +71,12 @@ final class AuthenticationManager: ObservableObject {
     }
 
     func reauthenticate(
-        user: User,
         email: String,
         password: String,
         completion: ((AuthDataResult?, (any Error)?) -> Void)?) {
+        guard let user else {
+            fatalError("No user logged in")
+        }
         let credential = EmailAuthProvider.credential(withEmail: email, password: password)
         user.reauthenticate(with: credential, completion: completion)
     }

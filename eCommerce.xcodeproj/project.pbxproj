@@ -145,6 +145,7 @@
 		A8EBB5402A5F4AE700D50139 /* StripeCustomerResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EBB53F2A5F4AE700D50139 /* StripeCustomerResponse.swift */; };
 		A8EBB5422A5F7C9600D50139 /* BackendApiCaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EBB5412A5F7C9600D50139 /* BackendApiCaller.swift */; };
 		A8EBB5452A5F835200D50139 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = A8EBB5442A5F835200D50139 /* Alamofire */; };
+		A8FF5A182E5283E70036AAEA /* DeepLinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FF5A172E5283E70036AAEA /* DeepLinkManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -281,6 +282,7 @@
 		A8B278472A5EEE5200C00F9B /* CheckoutButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutButtonView.swift; sourceTree = "<group>"; };
 		A8EBB53F2A5F4AE700D50139 /* StripeCustomerResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StripeCustomerResponse.swift; sourceTree = "<group>"; };
 		A8EBB5412A5F7C9600D50139 /* BackendApiCaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendApiCaller.swift; sourceTree = "<group>"; };
+		A8FF5A172E5283E70036AAEA /* DeepLinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -521,6 +523,7 @@
 			children = (
 				A8EBB5412A5F7C9600D50139 /* BackendApiCaller.swift */,
 				A84389F52A3E5A8F0082F53E /* AuthenticationManager.swift */,
+				A8FF5A172E5283E70036AAEA /* DeepLinkManager.swift */,
 				A86884112A68309500F5D4DE /* UserManager */,
 				A86884182A68320500F5D4DE /* ProductManager */,
 				A84ACFCC2A5FE56800D38A8D /* PaymentManager.swift */,
@@ -852,6 +855,7 @@
 				A8B2780C2A57673500C00F9B /* ProfileViewModel.swift in Sources */,
 				A8B2781B2A579F1200C00F9B /* CartItem.swift in Sources */,
 				A81637112A550B5700C90CBD /* DecreaseQuantityButtonView.swift in Sources */,
+				A8FF5A182E5283E70036AAEA /* DeepLinkManager.swift in Sources */,
 				A8B2782C2A5A558700C00F9B /* AddOrEditShippingAddressView.swift in Sources */,
 				A84215372A50298A0011107E /* View+Extension.swift in Sources */,
 				A84ACFE22A62008300D38A8D /* OrderListView.swift in Sources */,
