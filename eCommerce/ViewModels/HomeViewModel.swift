@@ -15,15 +15,12 @@ final class HomeViewModel: ObservableObject {
     @Published var showDiscountedProducts = false
     @Published var showNewInProducts = false
     private var discounts: [Discount] = []
-    private let productManager: ProductRepository
-    private let discountProductManager: DiscountProductRepository
+    private let productManager: ProductRepository & DiscountProductRepository
 
     init(
-        productManager: ProductRepository,
-        discountProductManager: DiscountProductRepository
+        productManager: ProductRepository & DiscountProductRepository
     ) {
         self.productManager = productManager
-        self.discountProductManager = discountProductManager
         getDiscounts()
         getFeaturedDiscountedProducts()
         getFeaturedNewInProducts()
@@ -32,7 +29,7 @@ final class HomeViewModel: ObservableObject {
     func getDiscounts() {
         Task {
             do {
-                self.discounts = try await discountProductManager.getAllDiscounts()
+                self.discounts = try await productManager.getAllDiscounts()
             } catch {
                 print(error)
             }

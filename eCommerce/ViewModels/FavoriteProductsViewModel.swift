@@ -12,22 +12,19 @@ import FirebaseAuth
 @MainActor
 final class FavoriteProductsViewModel: ObservableObject {
     @Published var favoriteProducts: [FavoriteProduct] = []
-    private var discountedProducts: [Discount] = []
+    private var discounts: [Discount] = []
     private var userAuth: User?
     private let userManager: FavoriteProductRepository
-    private let productManager: ProductRepository
-    private let discountProductManager: DiscountProductRepository
+    private let productManager: ProductRepository & DiscountProductRepository
     private var cancellables: Set<AnyCancellable> = []
 
     init(
         authenticationManager: AuthenticationManager,
         userManager: FavoriteProductRepository,
-        productManager: ProductRepository,
-        discountProductManager: DiscountProductRepository
+        productManager: ProductRepository & DiscountProductRepository
     ) {
         self.userManager = userManager
         self.productManager = productManager
-        self.discountProductManager = discountProductManager
         self.userAuth = authenticationManager.user
         getDiscounts()
         addListenerForFavorites()
@@ -47,7 +44,7 @@ final class FavoriteProductsViewModel: ObservableObject {
     func getDiscounts() {
         Task {
             do {
-                self.discountedProducts = try await discountProductManager.getAllDiscounts()
+                self.discounts = try await productManager.getAllDiscounts()
             } catch {
                 print(error)
             }
@@ -55,7 +52,7 @@ final class FavoriteProductsViewModel: ObservableObject {
     }
 
     func getDiscountForId(_ productId: String) -> Discount? {
-        return self.discountedProducts.first { $0.id == productId }
+        return self.discounts.first { $0.id == productId }
     }
 
     func getProductForId(_ productId: String) async throws -> Product? {

@@ -11,7 +11,6 @@ struct StoreView: View {
     private let authenticationManager: AuthenticationManager
     private let userManager: UserManager
     private let productManager: ProductManager
-    private let discountProductManager: DiscountProductManager
     @State private var searchText = ""
     @State private var isSelectingAll = false
     @State private var isSelectingCategory = false
@@ -25,13 +24,11 @@ struct StoreView: View {
     init(
         authenticationManager: AuthenticationManager,
         userManager: UserManager,
-        productManager: ProductManager,
-        discountProductManager: DiscountProductManager
+        productManager: ProductManager
     ) {
         self.authenticationManager = authenticationManager
         self.userManager = userManager
         self.productManager = productManager
-        self.discountProductManager = discountProductManager
     }
 
     var body: some View {
@@ -64,7 +61,6 @@ struct StoreView: View {
                     authenticationManager: authenticationManager,
                     userManager: userManager,
                     productManager: productManager,
-                    discountProductManager: discountProductManager,
                     category: selectedCategory,
                     subCategory: nil,
                     showDiscountedProducts: false,
@@ -76,7 +72,6 @@ struct StoreView: View {
                     authenticationManager: authenticationManager,
                     userManager: userManager,
                     productManager: productManager,
-                    discountProductManager: discountProductManager,
                     category: selectedCategory
                 )
             }
@@ -90,8 +85,7 @@ struct StoreView_Previews: PreviewProvider {
             StoreView(
                 authenticationManager: AuthenticationManager(),
                 userManager: UserManager(),
-                productManager: ProductManager(),
-                discountProductManager: DiscountProductManager()
+                productManager: ProductManager()
             )
         }
     }

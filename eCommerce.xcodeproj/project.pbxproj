@@ -110,8 +110,8 @@
 		A868841A2A6856A700F5D4DE /* ProductRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86884192A6856A700F5D4DE /* ProductRepository.swift */; };
 		A868841E2A685A9A00F5D4DE /* DiscountProductRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A868841D2A685A9A00F5D4DE /* DiscountProductRepository.swift */; };
 		A86884202A685AC100F5D4DE /* NewInProductRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A868841F2A685AC100F5D4DE /* NewInProductRepository.swift */; };
-		A86884222A685B0A00F5D4DE /* DiscountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86884212A685B0A00F5D4DE /* DiscountManager.swift */; };
-		A86884242A685B1600F5D4DE /* NewInManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86884232A685B1600F5D4DE /* NewInManager.swift */; };
+		A86884222A685B0A00F5D4DE /* ProductManager+Discount.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86884212A685B0A00F5D4DE /* ProductManager+Discount.swift */; };
+		A86884242A685B1600F5D4DE /* ProductManager+NewIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86884232A685B1600F5D4DE /* ProductManager+NewIn.swift */; };
 		A86884262A6A0E4B00F5D4DE /* RCValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86884252A6A0E4B00F5D4DE /* RCValues.swift */; };
 		A8701CF12A49C89000D565CD /* ProductDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8701CF02A49C89000D565CD /* ProductDatabase.swift */; };
 		A8701CF52A49DE2B00D565CD /* Discount.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8701CF42A49DE2B00D565CD /* Discount.swift */; };
@@ -250,8 +250,8 @@
 		A86884192A6856A700F5D4DE /* ProductRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductRepository.swift; sourceTree = "<group>"; };
 		A868841D2A685A9A00F5D4DE /* DiscountProductRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscountProductRepository.swift; sourceTree = "<group>"; };
 		A868841F2A685AC100F5D4DE /* NewInProductRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewInProductRepository.swift; sourceTree = "<group>"; };
-		A86884212A685B0A00F5D4DE /* DiscountManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscountManager.swift; sourceTree = "<group>"; };
-		A86884232A685B1600F5D4DE /* NewInManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewInManager.swift; sourceTree = "<group>"; };
+		A86884212A685B0A00F5D4DE /* ProductManager+Discount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProductManager+Discount.swift"; sourceTree = "<group>"; };
+		A86884232A685B1600F5D4DE /* ProductManager+NewIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProductManager+NewIn.swift"; sourceTree = "<group>"; };
 		A86884252A6A0E4B00F5D4DE /* RCValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RCValues.swift; sourceTree = "<group>"; };
 		A8701CF02A49C89000D565CD /* ProductDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDatabase.swift; sourceTree = "<group>"; };
 		A8701CF42A49DE2B00D565CD /* Discount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Discount.swift; sourceTree = "<group>"; };
@@ -639,8 +639,8 @@
 			isa = PBXGroup;
 			children = (
 				A8438A2C2A4502A80082F53E /* ProductManager.swift */,
-				A86884212A685B0A00F5D4DE /* DiscountManager.swift */,
-				A86884232A685B1600F5D4DE /* NewInManager.swift */,
+				A86884212A685B0A00F5D4DE /* ProductManager+Discount.swift */,
+				A86884232A685B1600F5D4DE /* ProductManager+NewIn.swift */,
 			);
 			path = ProductManager;
 			sourceTree = "<group>";
@@ -817,7 +817,7 @@
 				A84ACFE42A620DC900D38A8D /* OrdersViewModel.swift in Sources */,
 				A84ACFF52A63FA2600D38A8D /* FeaturedProductCellView.swift in Sources */,
 				A8438A282A4458680082F53E /* ProductDataManager.swift in Sources */,
-				A86884242A685B1600F5D4DE /* NewInManager.swift in Sources */,
+				A86884242A685B1600F5D4DE /* ProductManager+NewIn.swift in Sources */,
 				A8438A042A3FB96C0082F53E /* UserManager.swift in Sources */,
 				A8701D092A4DA05500D565CD /* Gender.swift in Sources */,
 				A868840C2A682EC200F5D4DE /* FavoriteProductRepository.swift in Sources */,
@@ -903,7 +903,7 @@
 				A868840A2A68096900F5D4DE /* UserRepository.swift in Sources */,
 				A8438A092A3FBEEB0082F53E /* SignInViewModel.swift in Sources */,
 				A8B278262A59A23C00C00F9B /* SignOutButtonView.swift in Sources */,
-				A86884222A685B0A00F5D4DE /* DiscountManager.swift in Sources */,
+				A86884222A685B0A00F5D4DE /* ProductManager+Discount.swift in Sources */,
 				A84ACFD62A602EF200D38A8D /* StripeCustomerRequest.swift in Sources */,
 				A84ACFF02A63268300D38A8D /* OrderAmountView.swift in Sources */,
 				A8B278242A59720100C00F9B /* EditEmailView.swift in Sources */,

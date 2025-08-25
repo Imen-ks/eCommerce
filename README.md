@@ -13,11 +13,19 @@ Xcode project built in SwiftUI relating to an eCommerce app showcasing fashion p
 Project using [Firebase](https://firebase.google.com/) and [Stripe API](https://stripe.com/).  
 App architecture : Repository Design Pattern
 
+- [Usage](#usage)
+- [Swift Package Manager Dependencies](#swift-package-manager-dependencies)
+- [Authentication](#authentication)
+- [Firebase Hosting](#firebase-hosting)
+- [Backend Server](#backend-server)
+- [Database](#database)
+---
+
 ## Usage
 
 Open the `eCommerce.xcodeproj` file with Xcode and build the application in the simulator or on a device.
 
-## Swift Package Manager dependencies
+## Swift Package Manager Dependencies
 
 ### Firebase
 
@@ -67,12 +75,12 @@ The link sent by Firebase has the following format :
 ```
 https://<hosting_domain>/__auth/action?apiKey=&mode=&oobCode=&continueUrl=
 ```  
-The [oobCode](https://cloud.google.com/identity-platform/docs/reference/rest/v1/OobReqType) query parameter must be extracted from the deep link and passed to Firebase's `applyActionCode` method for the action to take effect — in this case, verifying the user’s email address.
+The [oobCode](https://cloud.google.com/identity-platform/docs/reference/rest/v1/OobReqType) query parameter must be extracted from the deep link and passed to Firebase's `applyActionCode` method for the action to take effect — in this case, verifying and updating the user’s email address.
 
 In this project, the action code is handled directly in the app. SwiftUI receives the Universal Link via the `onOpenURL(perform:)` modifier. The `DeepLinkManager` EnvironmentObject is responsible for handling the link through its `handleFirebaseAuthLink(:)` method.
 
 > [!NOTE]
-> The universal link's domain passed to the `ActionCodeSettings` instance must be whitelisted in the Firebase Console.  
+> The Universal Link's domain passed to the `ActionCodeSettings` instance must be whitelisted in the Firebase Console.  
 > You can do this by navigating to **Authentication > Settings > Authorized domains**.
 ---
 
@@ -147,7 +155,7 @@ This function is deployed using :
 firebase deploy --only functions
 ```
 
-### Structure overview
+### Structure Overview
 ```
 ├── firebase.json
 ├── public
@@ -191,7 +199,7 @@ firebase deploy --only functions
 ```
 ---
 
-## Backend server
+## Backend Server
 
 As mentioned above, Stripe requires a server-side implementation.  
 The server in this project is hosted on [Render](https://render.com) and has **two endpoints**. The source code can be found [here](https://github.com/Imen-ks/eCommerceServer).

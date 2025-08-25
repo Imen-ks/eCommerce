@@ -1,5 +1,5 @@
 //
-//  DiscountManager.swift
+//  ProductManager+Discount.swift
 //  eCommerce
 //
 //  Created by Imen Ksouri on 19/07/2023.
@@ -8,11 +8,12 @@
 import Foundation
 import FirebaseFirestore
 
-final class DiscountProductManager: DiscountProductRepository {
-    internal let discountsCollection = Firestore.firestore().collection("discounts")
+extension ProductManager: DiscountProductRepository {
+    internal func discountsCollection() -> CollectionReference { Firestore.firestore().collection("discounts")
+    }
 
     internal func discountDocument(productId: String) -> DocumentReference {
-        discountsCollection.document(productId)
+        discountsCollection().document(productId)
     }
 
     func uploadDiscount(discount: Discount) async throws {
@@ -24,7 +25,7 @@ final class DiscountProductManager: DiscountProductRepository {
     }
 
     func getAllDiscounts() async throws -> [Discount] {
-        try await discountsCollection
+        try await discountsCollection()
             .getDocuments(as: Discount.self)
     }
 }

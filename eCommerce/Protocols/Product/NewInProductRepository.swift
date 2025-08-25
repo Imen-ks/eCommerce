@@ -10,7 +10,7 @@ import FirebaseFirestore
 import Combine
 
 protocol NewInProductRepository {
-    var newInsCollection: CollectionReference { get }
+    func newInsCollection() -> CollectionReference
 
     func newInDocument(productId: String) -> DocumentReference
 

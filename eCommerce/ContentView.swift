@@ -12,7 +12,6 @@ struct ContentView: View {
     private let authenticationManager = AuthenticationManager()
     private let userManager = UserManager()
     private let productManager = ProductManager()
-    private let discountProductManager = DiscountProductManager()
     private let paymentManager = PaymentManager()
 
     var body: some View {
@@ -22,7 +21,6 @@ struct ContentView: View {
                     authenticationManager: authenticationManager,
                     userManager: userManager,
                     productManager: productManager,
-                    discountProductManager: discountProductManager,
                     paymentManager: paymentManager,
                     showAuthentication: $showAuthentication
                 )
@@ -39,6 +37,11 @@ struct ContentView: View {
                 paymentManager: paymentManager,
                 showAuthentication: $showAuthentication
             )
+        }
+        .onChange(of: showAuthentication) { newValue in
+            if authenticationManager.user != nil {
+                authenticationManager.reload()
+            }
         }
     }
 }

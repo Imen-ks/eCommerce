@@ -11,20 +11,17 @@ struct CategoriesListView: View {
     private let authenticationManager: AuthenticationManager
     private let userManager: UserManager
     private let productManager: ProductManager
-    private let discountProductManager: DiscountProductManager
     var category: MasterCategory?
 
     init(
         authenticationManager: AuthenticationManager,
         userManager: UserManager,
         productManager: ProductManager,
-        discountProductManager: DiscountProductManager,
         category: MasterCategory?
     ) {
         self.authenticationManager = authenticationManager
         self.userManager = userManager
         self.productManager = productManager
-        self.discountProductManager = discountProductManager
         self.category = category
     }
 
@@ -35,7 +32,6 @@ struct CategoriesListView: View {
                     authenticationManager: authenticationManager,
                     userManager: userManager,
                     productManager: productManager,
-                    discountProductManager: discountProductManager,
                     category: category,
                     subCategory: nil,
                     showDiscountedProducts: false,
@@ -54,7 +50,6 @@ struct CategoriesListView: View {
                                     authenticationManager: authenticationManager,
                                     userManager: userManager,
                                     productManager: productManager,
-                                    discountProductManager: discountProductManager,
                                     category: category,
                                     subCategory: subcategory,
                                     showDiscountedProducts: false,
@@ -81,7 +76,6 @@ struct CategoriesListView_Previews: PreviewProvider {
                 authenticationManager: AuthenticationManager(),
                 userManager: UserManager(),
                 productManager: ProductManager(),
-                discountProductManager: DiscountProductManager(),
                 category: .accessories
             )
         }

@@ -17,13 +17,17 @@ final class AuthenticationManager: ObservableObject {
     }
 
     private func addListener() {
-        if let handle = authenticationStateHandle {
-            Auth.auth().removeStateDidChangeListener(handle)
-        }
+        removeListener()
         authenticationStateHandle = Auth.auth()
             .addStateDidChangeListener { _, user in
                 self.user = user
             }
+    }
+
+    func removeListener() {
+        if let handle = authenticationStateHandle {
+            Auth.auth().removeStateDidChangeListener(handle)
+        }
     }
 
     func register(email: String,

@@ -12,7 +12,6 @@ struct ProductCellViewBuilder: View {
     private let authenticationManager: AuthenticationManager
     private let userManager: UserManager
     private let productManager: ProductManager
-    private let discountProductManager: DiscountProductManager
     let productId: String
     let discountId: String
     @State private var product: Product? = nil
@@ -23,14 +22,12 @@ struct ProductCellViewBuilder: View {
         authenticationManager: AuthenticationManager,
         userManager: UserManager,
         productManager: ProductManager,
-        discountProductManager: DiscountProductManager,
         productId: String,
         discountId: String
     ) {
         self.authenticationManager = authenticationManager
         self.userManager = userManager
         self.productManager = productManager
-        self.discountProductManager = discountProductManager
         self.productId = productId
         self.discountId = discountId
     }
@@ -52,7 +49,7 @@ struct ProductCellViewBuilder: View {
                 self.productImageUrl = self.product?.variants.first?.imageUrl
             }
             self.product = try? await productManager.getProduct(productId: productId)
-            self.discount = try? await discountProductManager.getDiscount(productId: productId)
+            self.discount = try? await productManager.getDiscount(productId: productId)
         }
     }
 }
@@ -64,7 +61,6 @@ struct ProductCellViewBuilder_Previews: PreviewProvider {
                 authenticationManager: AuthenticationManager(),
                 userManager: UserManager(),
                 productManager: ProductManager(),
-                discountProductManager: DiscountProductManager(),
                 productId: "10001",
                 discountId: "10001"
             )

@@ -1,5 +1,5 @@
 //
-//  NewInManager.swift
+//  ProductManager+NewIn.swift
 //  eCommerce
 //
 //  Created by Imen Ksouri on 19/07/2023.
@@ -8,11 +8,12 @@
 import Foundation
 import FirebaseFirestore
 
-final class NewInProductManager: NewInProductRepository {
-    internal let newInsCollection = Firestore.firestore().collection("new_ins")
+extension ProductManager: NewInProductRepository {
+    internal func newInsCollection() -> CollectionReference { Firestore.firestore().collection("new_ins")
+    }
 
     internal func newInDocument(productId: String) -> DocumentReference {
-        newInsCollection.document(productId)
+        newInsCollection().document(productId)
     }
 
     func uploadNewIn(newIn: NewIn) async throws {
@@ -24,7 +25,7 @@ final class NewInProductManager: NewInProductRepository {
     }
 
     func getAllNewIns() async throws -> [NewIn] {
-        try await newInsCollection
+        try await newInsCollection()
             .getDocuments(as: NewIn.self)
     }
 }

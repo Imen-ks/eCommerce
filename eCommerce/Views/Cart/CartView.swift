@@ -21,7 +21,6 @@ struct CartView: View {
         authenticationManager: AuthenticationManager,
         userManager: UserManager,
         productManager: ProductManager,
-        discountProductManager: DiscountProductManager,
         paymentManager: PaymentManager
     ) {
         self.authenticationManager = authenticationManager
@@ -31,8 +30,7 @@ struct CartView: View {
             wrappedValue: CartViewModel(
                 authenticationManager: authenticationManager,
                 userManager: userManager,
-                productManager: productManager,
-                discountProductManager: discountProductManager
+                productManager: productManager
             )
         )
     }
@@ -130,7 +128,6 @@ struct CartView_Previews: PreviewProvider {
                     authenticationManager: AuthenticationManager(),
                     userManager: UserManager(),
                     productManager: ProductManager(),
-                    discountProductManager: DiscountProductManager(),
                     paymentManager: PaymentManager()
                 )
             }

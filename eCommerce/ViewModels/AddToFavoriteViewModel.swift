@@ -16,12 +16,12 @@ final class AddToFavoriteViewModel: ObservableObject {
     var discount: Discount?
     @Published var favoriteProducts: [FavoriteProduct] = []
     private var userAuth: User?
-    private let userManager: CartRepository & FavoriteProductRepository
+    private let userManager: FavoriteProductRepository
     private var cancellables: Set<AnyCancellable> = []
 
     init(
         authenticationManager: AuthenticationManager,
-        userManager: CartRepository & FavoriteProductRepository,
+        userManager: FavoriteProductRepository,
         product: Product,
         discount: Discount?
     ) {

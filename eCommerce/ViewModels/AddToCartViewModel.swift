@@ -19,12 +19,12 @@ final class AddToCartViewModel: ObservableObject {
     var quantity: Int
     @Published var cartItems: [CartItem] = []
     private var userAuth: User?
-    private let userManager: CartRepository & FavoriteProductRepository
+    private let userManager: CartRepository
     private var cancellables: Set<AnyCancellable> = []
 
     init(
         authenticationManager: AuthenticationManager,
-        userManager: CartRepository & FavoriteProductRepository,
+        userManager: CartRepository,
         product: Product,
         discount: Discount?,
         selectedVariant: Int,

@@ -9,10 +9,7 @@ import Foundation
 
 #if DEBUG
 final class ProductDataManager {
-
     static var firebaseProductManager = ProductManager()
-    static var firebaseDiscountProductManager = DiscountProductManager()
-    static var firebaseNewInProductManager = NewInProductManager()
 
     private init() {}
 
@@ -29,7 +26,7 @@ final class ProductDataManager {
     static func loadDiscounts() async throws {
         for discount in DiscountDatabase.discounts {
             do {
-                try await firebaseDiscountProductManager.uploadDiscount(discount: discount)
+                try await firebaseProductManager.uploadDiscount(discount: discount)
             } catch {
                 print(error)
             }
@@ -39,7 +36,7 @@ final class ProductDataManager {
     static func loadNewIns() async throws {
         for newIn in NewInDatabase.newIns {
             do {
-                try await firebaseNewInProductManager.uploadNewIn(newIn: newIn)
+                try await firebaseProductManager.uploadNewIn(newIn: newIn)
             } catch {
                 print(error)
             }

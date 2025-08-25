@@ -23,15 +23,13 @@ final class ProductsViewModel: ObservableObject {
     private var userAuth: User?
     private var lastDocument: DocumentSnapshot? = nil
     private let userManager: FavoriteProductRepository
-    private let productManager: ProductRepository
-    private let discountProductManager: DiscountProductRepository
+    private let productManager: ProductRepository & DiscountProductRepository
     private var cancellables: Set<AnyCancellable> = []
 
     init(
         authenticationManager: AuthenticationManager,
         userManager: FavoriteProductRepository,
-        productManager: ProductRepository,
-        discountProductManager: DiscountProductRepository,
+        productManager: ProductRepository & DiscountProductRepository,
         category: MasterCategory?,
         subCategory: SubCategory?,
         showDiscountedProducts: Bool,
@@ -39,7 +37,6 @@ final class ProductsViewModel: ObservableObject {
     ) {
         self.userManager = userManager
         self.productManager = productManager
-        self.discountProductManager = discountProductManager
         self.category = category
         self.subCategory = subCategory
         self.showDiscountedProducts = showDiscountedProducts
@@ -80,7 +77,7 @@ final class ProductsViewModel: ObservableObject {
     func getDiscounts() {
         Task {
             do {
-                self.discounts = try await discountProductManager.getAllDiscounts()
+                self.discounts = try await productManager.getAllDiscounts()
             } catch {
                 print(error)
             }

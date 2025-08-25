@@ -12,22 +12,18 @@ struct HomeView: View {
     private let authenticationManager: AuthenticationManager
     private let userManager: UserManager
     private let productManager: ProductManager
-    private let discountProductManager: DiscountProductManager
     @StateObject var viewModel: HomeViewModel
 
     init(
         authenticationManager: AuthenticationManager,
         userManager: UserManager,
-        productManager: ProductManager,
-        discountProductManager: DiscountProductManager
+        productManager: ProductManager
     ) {
         self.authenticationManager = authenticationManager
         self.userManager = userManager
         self.productManager = productManager
-        self.discountProductManager = discountProductManager
         self._viewModel = .init(wrappedValue: HomeViewModel(
-            productManager: productManager,
-            discountProductManager: discountProductManager)
+            productManager: productManager)
         )
     }
 
@@ -127,7 +123,6 @@ struct HomeView: View {
                     authenticationManager: authenticationManager,
                     userManager: userManager,
                     productManager: productManager,
-                    discountProductManager: discountProductManager,
                     category: nil,
                     subCategory: nil,
                     showDiscountedProducts: viewModel.showDiscountedProducts,
@@ -139,7 +134,6 @@ struct HomeView: View {
                     authenticationManager: authenticationManager,
                     userManager: userManager,
                     productManager: productManager,
-                    discountProductManager: discountProductManager,
                     category: nil,
                     subCategory: nil,
                     showDiscountedProducts: viewModel.showDiscountedProducts,
@@ -156,8 +150,7 @@ struct HomeView_Previews: PreviewProvider {
             HomeView(
                 authenticationManager: AuthenticationManager(),
                 userManager: UserManager(),
-                productManager: ProductManager(),
-                discountProductManager: DiscountProductManager()
+                productManager: ProductManager()
             )
         }
     }

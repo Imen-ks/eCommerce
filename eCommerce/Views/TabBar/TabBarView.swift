@@ -29,7 +29,6 @@ struct TabBarView: View {
     private let authenticationManager: AuthenticationManager
     private let userManager: UserManager
     private let productManager: ProductManager
-    private let discountProductManager: DiscountProductManager
     private let paymentManager: PaymentManager
     @Binding var showAuthentication: Bool
     @State private var currentTab: Tab = .home
@@ -40,14 +39,12 @@ struct TabBarView: View {
         authenticationManager: AuthenticationManager,
         userManager: UserManager,
         productManager: ProductManager,
-        discountProductManager: DiscountProductManager,
         paymentManager: PaymentManager,
         showAuthentication: Binding<Bool>
     ) {
         self.authenticationManager = authenticationManager
         self.userManager = userManager
         self.productManager = productManager
-        self.discountProductManager = discountProductManager
         self.paymentManager = paymentManager
         self._showAuthentication = showAuthentication
     }
@@ -57,29 +54,25 @@ struct TabBarView: View {
             HomeView(
                 authenticationManager: authenticationManager,
                 userManager: userManager,
-                productManager: productManager,
-                discountProductManager: discountProductManager
+                productManager: productManager
             ).tag(Tab.home)
 
             StoreView(
                 authenticationManager: authenticationManager,
                 userManager: userManager,
-                productManager: productManager,
-                discountProductManager: discountProductManager
+                productManager: productManager
             ).tag(Tab.store)
 
             FavoritesView(
                 authenticationManager: authenticationManager,
                 userManager: userManager,
-                productManager: productManager,
-                discountProductManager: discountProductManager
+                productManager: productManager
             ).tag(Tab.favorites)
 
             CartView(
                 authenticationManager: authenticationManager,
                 userManager: userManager,
                 productManager: productManager,
-                discountProductManager: discountProductManager,
                 paymentManager: paymentManager
             ).tag(Tab.cart)
 
@@ -121,7 +114,6 @@ struct TabBarView_Previews: PreviewProvider {
             authenticationManager: AuthenticationManager(),
             userManager: UserManager(),
             productManager: ProductManager(),
-            discountProductManager: DiscountProductManager(),
             paymentManager: PaymentManager(),
             showAuthentication: .constant(false)
         )

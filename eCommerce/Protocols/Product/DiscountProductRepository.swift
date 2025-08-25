@@ -10,7 +10,7 @@ import FirebaseFirestore
 import Combine
 
 protocol DiscountProductRepository {
-    var discountsCollection: CollectionReference { get }
+    func discountsCollection() -> CollectionReference
 
     func discountDocument(productId: String) -> DocumentReference
 

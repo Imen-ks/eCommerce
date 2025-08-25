@@ -92,7 +92,7 @@ struct EditEmailView: View {
                     Label {
                         Group {
                             if emailUpdateIsRequested && !emailIsUpdated {
-                                Text("Request sent to your current email address. Click on the link received to proceed with update.")
+                                Text("Request sent to \(newEmail).\nClick on the link received to proceed with update.")
                             } else if emailIsUpdated {
                                 Text("Email has been changed")
                             }
